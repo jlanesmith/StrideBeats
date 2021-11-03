@@ -11,6 +11,16 @@ Project for ECSE 542: Human-Computer Interaction
 
 `expo install react-native-screens react-native-safe-area-context`
 
+<br/>
+
+To set up the app, I followed the tutorials below. If there's issues with the above commands, read through the tutorials:
+
+https://reactnative.dev/docs/environment-setup
+
+https://reactnavigation.org/docs/getting-started/
+
+https://reactnavigation.org/docs/hello-react-navigation
+
 ## Development
 
 `expo start`
