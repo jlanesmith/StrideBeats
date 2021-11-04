@@ -5,15 +5,9 @@ Project for ECSE 542: Human-Computer Interaction
 
 `npm install --global expo-cli`
 
-`yarn add @react-navigation/native`
-
-`yarn add @react-navigation/native-stack`
-
-`expo install react-native-screens react-native-safe-area-context`
-
 <br/>
 
-To set up the app, I followed the tutorials below. If there's issues with the above commands, read through the tutorials:
+To set up the app, I followed the tutorials below. If there's dependency issues, read through the tutorials:
 
 https://reactnative.dev/docs/environment-setup
 
