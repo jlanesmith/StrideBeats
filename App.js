@@ -5,19 +5,34 @@ import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import SelectPlaylist from './screens/SelectPlaylist'
 import Run from './screens/Run'
-import ViewPlaylists from './screens/ViewPlaylists'
+import MyPlaylists from './screens/MyPlaylists'
+import CreateEditPlaylist from './screens/CreateEditPlaylist'
 
-let playlists = [{key: 'Playlist 1'}, {key: 'Playlist 2'}, {key: 'Playlist 3'}];
+let playlists = [
+  {key: 'Playlist 1 a', songs: 
+    [{key: "Song 1", artist: "Artist 1", BPM: 160, path: "path/to/song1"}, 
+    {key: "Song 2", artist: "Artist 2", BPM: 110, path: "path/to/song2"}]
+  }, 
+  {key: 'Playlist 2 a', songs: 
+    [{key: "Song 1", artist: "Artist 1", BPM: 160, path: "path/to/song1"}, 
+    {key: "Song 2", artist: "Artist 2", BPM: 110, path: "path/to/song2"}]
+  }, 
+  {key: 'Playlist 3 a', songs: 
+    [{key: "Song 1", artist: "Artist 1", BPM: 160, path: "path/to/song1"}, 
+    {key: "Song 2", artist: "Artist 2", BPM: 110, path: "path/to/song2"}]
+  }
+];
 
 function HomeScreen({ navigation }) {
   return (
     <View style={styles.container}>
       <Text style={styles.titleText} >StrideBeats</Text>
       <TouchableOpacity style={styles.runButton} onPress={()=> navigation.navigate('Select Playlist', {playlists})}>
-        <Text style={styles.buttonText}> RUN </Text>
+        <Text style={styles.runText}> RUN </Text>
       </TouchableOpacity>
-      <TouchableOpacity style={styles.viewPlaylistButton} onPress={()=> navigation.navigate('My Playlists', {playlists})}>
-        <Text style={styles.buttonText}> View Playlists </Text>
+      <TouchableOpacity style={styles.playlistsButton} onPress={()=> navigation.navigate('My Playlists', {playlists})}>
+      <Text style={styles.playlistsText}> Create & Edit </Text>
+      <Text style={styles.playlistsText}> Playlists </Text>
       </TouchableOpacity>
       <StatusBar style="auto" />
     </View>
@@ -40,7 +55,13 @@ function App() {
           {props  => <Run {...props} />}
         </Stack.Screen>
         <Stack.Screen options={{ headerTitleStyle: {fontSize: 32} }} name="My Playlists" >
-          {props  => <ViewPlaylists {...props} />}
+          {props  => <MyPlaylists {...props} />}
+        </Stack.Screen>
+        <Stack.Screen options={{ headerTitleStyle: {fontSize: 32} }} name="Create Playlist" >
+          {props  => <CreateEditPlaylist {...props} />}
+        </Stack.Screen>
+        <Stack.Screen options={{ headerTitleStyle: {fontSize: 32} }} name="Edit Playlist" >
+          {props  => <CreateEditPlaylist {...props} />}
         </Stack.Screen>
       </Stack.Navigator>
     </NavigationContainer>
@@ -63,20 +84,27 @@ const styles = StyleSheet.create({
     paddingVertical: 12,
     paddingHorizontal: 32,
     marginBottom: 60,
-    borderRadius: 32,
+    borderRadius: 40,
     backgroundColor: 'red',
     borderWidth: 1,
     borderColor: 'black',
   },
-  viewPlaylistButton: {
+  playlistsButton: {
     paddingVertical: 12,
-    paddingHorizontal: 32,
-    borderRadius: 16,
+    paddingHorizontal: 16,
+    marginTop: 8,
+    borderRadius: 20,
     backgroundColor: 'red',
     borderWidth: 1,
     borderColor: 'black',
+    alignItems: 'center'
   },
-  buttonText: {
+  runText: {
+    fontSize: 40,
+    color: 'white',
+    fontWeight: 'bold'
+  },
+  playlistsText: {
     fontSize: 30,
     color: 'white',
     fontWeight: 'bold'
