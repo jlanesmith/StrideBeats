@@ -38,6 +38,7 @@ export class RunControl extends Component {
   };
   _onSingleTap = event => {
     if (event.nativeEvent.state === State.ACTIVE) {
+      alert(this.props.playlist.key)
       if(songState.songPlaying) {
         songState.songPlaying = false
         //PAUSE THE SONG
