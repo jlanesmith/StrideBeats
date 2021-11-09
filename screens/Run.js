@@ -58,26 +58,31 @@ export class RunControl extends Component {
       songState.poll = songState.poll + 1
       var deltaX = songState.panStartX - nativeEvent.x
       var deltaY = songState.panStartY - nativeEvent.y
-      console.log("entered increase/decrease")
-      if (deltaY > 0) {
-        //ADD THE HAPTIC BEHAVIOUR 
+      console.log(deltaY);
+      console.log(deltaX);
+      if(Math.abs(deltaX) < Math.abs(deltaY)) {
+        if (deltaY > 0) {
+          console.log("entered increase")
+          //ADD THE HAPTIC BEHAVIOUR 
 
-        if (!songState.speed_increase) {
-          songState.speed_increase = true
-        }
+          if (!songState.speed_increase) {
+            songState.speed_increase = true
+          }
 
-        if (songState.speed_decrease) {
-          songState.speed_decrease = false
-        }
-      } else {
-        //ADD THE HAPTIC BEHAVIOUR
+          if (songState.speed_decrease) {
+            songState.speed_decrease = false
+          }
+        } else {
+          console.log("entered decrease")
+          //ADD THE HAPTIC BEHAVIOUR
 
-        if (!songState.speed_decrease) {
-          songState.speed_decrease = true
-        }
+          if (!songState.speed_decrease) {
+            songState.speed_decrease = true
+          }
 
-        if (songState.speed_increase) {
-          songState.speed_increase = false
+          if (songState.speed_increase) {
+            songState.speed_increase = false
+          }
         }
       }
     }
@@ -178,16 +183,6 @@ export default function RunScreen({ route, navigation }) {
 
   const selectedPlaylist = route.params;
 
-  // var running = '';
-  // return (
-  //   <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}
-  //   onPress={() => running='Run Screen Test'}
-
-  //   >
-  //     <Text> {running} </Text>
-
-  //   </View>
-  // );
   return (
     <RunControl playlist={selectedPlaylist} navigation={navigation}></RunControl>
   );
