@@ -38,7 +38,13 @@ export class RunControl extends Component {
   };
   _onSingleTap = event => {
     if (event.nativeEvent.state === State.ACTIVE) {
-      alert(this.props.playlist.key);
+      if(songState.songPlaying) {
+        songState.songPlaying = false
+        //PAUSE THE SONG
+      } else {
+        songState.songPlaying = true
+        //PLAY THE SONG
+      }
     }
   };
   _onDoubleTap = event => {
@@ -48,18 +54,13 @@ export class RunControl extends Component {
   };
   _onPanHandlerStateChange = ({ nativeEvent }) => {
     if (nativeEvent.state === State.BEGAN) {
-      console.log(nativeEvent.x, nativeEvent.y)
       songState.panStartX = nativeEvent.x
       songState.panStartY = nativeEvent.y
-      songState.poll = 0
     }
 
     if (nativeEvent.state === State.ACTIVE) {
-      songState.poll = songState.poll + 1
       var deltaX = songState.panStartX - nativeEvent.x
       var deltaY = songState.panStartY - nativeEvent.y
-      console.log(deltaY);
-      console.log(deltaX);
       if(Math.abs(deltaX) < Math.abs(deltaY)) {
         if (deltaY > 0) {
           console.log("entered increase")
@@ -88,11 +89,8 @@ export class RunControl extends Component {
     }
 
     if (nativeEvent.state === State.END) {
-      console.log("end", "poll:", songState.poll)
       var deltaX = songState.panStartX - nativeEvent.x
       var deltaY = songState.panStartY - nativeEvent.y
-
-      console.log(deltaX, deltaY)
 
       if (Math.abs(deltaX) >= Math.abs(deltaY)) {
         if (deltaX < 0) {
