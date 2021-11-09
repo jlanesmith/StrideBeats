@@ -7,6 +7,7 @@ import SelectPlaylist from './screens/SelectPlaylist'
 import Run from './screens/Run'
 import MyPlaylists from './screens/MyPlaylists'
 import CreateEditPlaylist from './screens/CreateEditPlaylist'
+import AddSong from './screens/AddSong'
 
 let playlists = [
   {key: 'Playlist 1 a', songs: 
@@ -63,6 +64,9 @@ function App() {
         <Stack.Screen options={{ headerTitleStyle: {fontSize: 32} }} name="Edit Playlist" >
           {props  => <CreateEditPlaylist {...props} />}
         </Stack.Screen>
+        <Stack.Screen options={{ headerTitleStyle: {fontSize: 32} }} name="Add Song" >
+          {props  => <AddSong {...props} />}
+        </Stack.Screen>      
       </Stack.Navigator>
     </NavigationContainer>
   );
