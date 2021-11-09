@@ -9,6 +9,8 @@ import MyPlaylists from './screens/MyPlaylists'
 import CreateEditPlaylist from './screens/CreateEditPlaylist'
 import AddSong from './screens/AddSong'
 
+import 'react-native-gesture-handler';
+
 let playlists = [
   {key: 'Playlist 1 a', songs: 
     [{key: "Song 1", artist: "Artist 1", BPM: 160, path: "path/to/song1"}, 
