@@ -15,8 +15,16 @@ export default function AddSong({ route, navigation }) {
     {key: "Shake It Off", artist: "Taylor Swift", BPM: 162, path: "http://www.cs.mcgill.ca/~tcurti/Shake_it_Off.m4a"}, 
     {key: "Rock and Roll Ain't Noise Pollution", artist: "AC/DC", BPM: 95, path: "http://www.cs.mcgill.ca/~tcurti/Rock_and_Roll.m4a"},
     {key: "American Idiot", artist: "Green Day", BPM: 186, path: "http://www.cs.mcgill.ca/~tcurti/American_Idiot.m4a"},
+    {key: "James", artist: "Billy Joel", BPM: 140, path: "http://www.cs.mcgill.ca/~tcurti/James.m4a"},
+    {key: "Who Knew", artist: "Pink", BPM: 140, path: "http://www.cs.mcgill.ca/~tcurti/Who_Knew.m4a"},
+    {key: "White Wedding Part 1", artist: "Billy Idol", BPM: 147, path: "http://www.cs.mcgill.ca/~tcurti/White_Wedding.m4a"},
+    {key: "Born To Be Wild", artist: "Steppenwolf", BPM: 146, path: "http://www.cs.mcgill.ca/~tcurti/Born_To_Be_Wild.m4a"},
+    {key: "Livin on a Prayer", artist: "Bon Jovi", BPM: 123, path: "http://www.cs.mcgill.ca/~tcurti/Livin_on_a_Prayer.m4a"},
+    {key: "Edge of Glory", artist: "Lady Gaga", BPM: 128, path: "http://www.cs.mcgill.ca/~tcurti/Edge_of_Glory.m4a"},
+    {key: "Jessie's Girl", artist: "Rick Springfield", BPM: 132, path: "http://www.cs.mcgill.ca/~tcurti/Jessie_Girl.m4a"},
+    {key: "Trouble", artist: "Pink", BPM: 135, path: "http://www.cs.mcgill.ca/~tcurti/Trouble.m4a"},
   ]
-
+   
   const [visibleSongs, onChangeVisibleSongs] = React.useState(allSongs.filter(song => (typeof playlist.songs.find(o => o.key == song.key) == 'undefined')));
 
   return (
