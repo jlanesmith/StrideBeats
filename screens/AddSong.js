@@ -1,5 +1,6 @@
 import React from 'react';
 import { SafeAreaView, StyleSheet, FlatList, Text, View, TouchableOpacity, TextInput } from 'react-native';
+import { Icon, CheckBox } from 'react-native-elements'
 
 
 export default function AddSong({ route, navigation }) {
@@ -16,31 +17,53 @@ export default function AddSong({ route, navigation }) {
     {key: "Song 8", artist: "Artist 2", BPM: 110, path: "path/to/song8"},
   ]
 
-  const [visibleSongs, onChangeVisibleSongs] = React.useState(allSongs.filter(song => (typeof playlist.songs.find(o => o.key == song.key) == 'undefined')));
+  const emptyArray = new Array(allSongs.length).fill(0);
+
+  const [visibleSongs, setVisibleSongs] = React.useState(allSongs.filter(song => (typeof playlist.songs.find(o => o.key == song.key) == 'undefined')));
+  const [checkboxes, setCheckboxes] = React.useState(emptyArray);
+  const [, setUpdate] = React.useState(0);
 
   return (
     <SafeAreaView style={styles.container}>
-      <View style={styles.inputView}>
-        <View style={styles.textInputView}>
-          {/* <TextInput
-            style={styles.textInput}
-            onChangeText={onChangeText}
-            value={text}
-            placeholder="Type playlist title"
-          /> */}
+      <View style={styles.topViewContainer}>
+        <View style={styles.topView}>
+          <View style={styles.searchContainer}>
+            <View style={styles.searchButton}> 
+              <TouchableOpacity onPress={() => {console.log("trash")}}>
+                <Icon name='search' type='material-icons' size={40} />
+              </TouchableOpacity>
+            </View>
+          </View>
+          <TouchableOpacity style={styles.clearSearchButton} onPress={() => navigation.navigate('Add Song', {})}>
+            <Text style={styles.clearSearchText}> Clear Search </Text>
+          </TouchableOpacity>
         </View>
-        <TouchableOpacity style={styles.addSongButton} onPress={() => navigation.navigate('Add Song', {})}>
-          <Text style={styles.addSongText}> Add </Text>
-          <Text style={styles.addSongText}> Song </Text>
-        </TouchableOpacity>
       </View>
       <FlatList
         data={visibleSongs}
-        renderItem={({item}) => (
-          <View elevation={20}>
-            {/* <TouchableOpacity style={styles.row} onPress={() => navigation.navigate('Run', {playlists})}> */}
-              <Text>{item.key}</Text>
-            {/* </TouchableOpacity> */}
+        renderItem={({item, index}) => (
+          <View elevation={20} style={styles.row}>
+            <View style={styles.songArtistView}>
+              <Text style={styles.songText}>{item.key}</Text>         
+              <Text style={styles.otherText}>   {item.artist}</Text>         
+            </View>
+            <View style={styles.bpmView}>
+              <Text style={styles.otherText}>BPM</Text>
+              <Text style={styles.otherText}>{item.BPM}</Text>
+            </View>
+            <View style={styles.checkboxView}>
+              <CheckBox
+                checked={checkboxes[index]}
+                checkedColor='white'
+                uncheckedColor='white'
+                onPress={() => {
+                  let newCheckboxes = checkboxes;
+                  newCheckboxes[index] = !checkboxes[index];
+                  setCheckboxes(newCheckboxes);
+                  setUpdate(update => update + 1)
+                }}
+              />
+            </View>
           </View>
         )}
       />
@@ -55,46 +78,66 @@ export default function AddSong({ route, navigation }) {
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
-    justifyContent: 'center',
-    paddingTop: 8
-  },
-  row: {
-    backgroundColor: 'red',
-    padding: 8,
-    marginVertical: 6,
-    alignItems: 'center',
+    paddingTop: 8,
   },
   title: {
     fontSize: 24,
     color: 'white'
   },
-  inputView: {
+  topViewContainer: {
+    alignItems: 'center'
+  },
+  topView: {
     flexDirection: 'row',
   },
-  textInputView: {
+  searchContainer: {
     justifyContent: 'center',
-    flex: 1
   },
-  textInput: {
+  searchButton: {
+    justifyContent: 'center',
+    width: 50,
     height: 50,
-    margin: 12,
-    borderWidth: 1,
-    borderRadius: 10,
-    padding: 10,
-    fontSize: 20
+    backgroundColor: 'white',
+    borderRadius: 12,
+    borderWidth: 1
   },
-  addSongButton: {
-    backgroundColor: 'red',
+  clearSearchButton: {
+    backgroundColor: 'white',
     marginVertical: 5,
     marginHorizontal: 10,
-    borderRadius: 24,
+    borderRadius: 12,
+    borderWidth: 1,
     padding: 10
   },
-  addSongText: {
-    color: 'white',
-    fontSize: 24,
+  clearSearchText: {
+    fontSize: 20,
     textAlign: 'center'
+  },
+  row: {
+    backgroundColor: 'red',
+    padding: 8,
+    marginVertical: 6,
+    flexDirection: 'row',
+  },
+
+  songArtistView: {
+    width: '50%'
+  },
+  bpmView: {
+    width: '30%'
+  },
+  checkboxView: {
+    width: '20%',
+    alignItems: 'center',
+    justifyContent: 'center'
+  },
+  songText: {
+    color: 'white',
+    fontSize: 20,
+  },
+  otherText: {
+    color: 'white',
+    fontSize: 18,
   },
   saveContainer: {
     height: 60,
