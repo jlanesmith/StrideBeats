@@ -15,7 +15,7 @@ export default function ViewPlaylists({ route, navigation }) {
             <Text style={styles.title}>{item.key}</Text>
             <View style={styles.iconViewContainer}>
               <View style={styles.iconView}>
-                <TouchableOpacity onPress={() => navigation.navigate('Edit Playlist', {mode: "Edit", playlist: item})}>
+                <TouchableOpacity onPress={() => navigation.navigate('Edit Playlist', {mode: "Edit Playlist", playlist: item})}>
                   <Icon reverse name='edit' type='material' size={16} />
                 </TouchableOpacity>
                 <TouchableOpacity onPress={() => {console.log("trash")}}>
@@ -26,7 +26,7 @@ export default function ViewPlaylists({ route, navigation }) {
           </View>
         )}
       />
-      <TouchableOpacity style={styles.plusBotton} onPress={() => navigation.navigate('Create Playlist', {mode: "Create", playlist: {}})}>
+      <TouchableOpacity style={styles.plusBotton} onPress={() => navigation.navigate('Create Playlist', {mode: "Create Playlist", playlist: {}})}>
         <Icon name='plus' type='feather' size={40} color='black' />
       </TouchableOpacity>
     </SafeAreaView>

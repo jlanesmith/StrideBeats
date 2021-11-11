@@ -4,8 +4,14 @@ import { SafeAreaView, StyleSheet, FlatList, Text, View, TouchableOpacity, TextI
 
 export default function CreateEditPlaylist({ route, navigation }) {
   const { mode, playlist } = route.params;
-  const [text, onChangeText] = React.useState(mode == "Create" ? "" : playlist.key);
-  const [songs, onChangeSongs] = React.useState(mode == "Create" ? [] : playlist.songs);
+  const [text, onChangeText] = React.useState(mode == "Create Playlist" ? "" : playlist.key);
+  const [songs, setSongs] = React.useState(mode == "Create Playlist" ? [] : playlist.songs);
+
+  React.useEffect(() => {
+    if (route.params?.songs) {
+      setSongs(songs => [...songs, ...route.params?.songs])
+    }
+  }, [route.params?.songs]);
 
   return (
     <SafeAreaView style={styles.container}>
@@ -18,7 +24,7 @@ export default function CreateEditPlaylist({ route, navigation }) {
             placeholder="Type playlist title"
           />
         </View>
-        <TouchableOpacity style={styles.addSongButton} onPress={() => navigation.navigate('Add Song', { songs: playlist.songs })}>
+        <TouchableOpacity style={styles.addSongButton} onPress={() => navigation.navigate('Add Song', { mode: mode, playlistSongs: playlist.songs })}>
           <Text style={styles.addSongText}> Add </Text>
           <Text style={styles.addSongText}> Song </Text>
         </TouchableOpacity>
@@ -27,7 +33,7 @@ export default function CreateEditPlaylist({ route, navigation }) {
         data={songs}
         renderItem={({item}) => (
           <View elevation={20}>
-            <TouchableOpacity style={styles.row} onPress={() => navigation.navigate('Run', {playlists})}>
+            <TouchableOpacity style={styles.row}>
               <Text style={styles.title}>{item.key}</Text>
             </TouchableOpacity>
           </View>

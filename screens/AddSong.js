@@ -1,10 +1,11 @@
 import React from 'react';
-import { SafeAreaView, StyleSheet, FlatList, Text, View, TouchableOpacity, TextInput } from 'react-native';
+import { SafeAreaView, StyleSheet, FlatList, Text, View, TouchableOpacity } from 'react-native';
 import { Icon, CheckBox } from 'react-native-elements'
+import {Dimensions} from 'react-native';
 
 
 export default function AddSong({ route, navigation }) {
-  const playlist = route.params;
+  const { mode, playlistSongs } = route.params;
 
   const allSongs = [
     {key: "Cold Shoulder", artist: "Adele", BPM: 110, path: "http://www.cs.mcgill.ca/~tcurti/Cold_Shoulder_slow.m4a"}, 
@@ -26,10 +27,8 @@ export default function AddSong({ route, navigation }) {
     {key: "Trouble", artist: "Pink", BPM: 135, path: "http://www.cs.mcgill.ca/~tcurti/Trouble.m4a"},
   ]
 
-  const emptyArray = new Array(allSongs.length).fill(0);
-
-  const [visibleSongs, setVisibleSongs] = React.useState(allSongs.filter(song => (typeof playlist.songs.find(o => o.key == song.key) == 'undefined')));
-  const [checkboxes, setCheckboxes] = React.useState(emptyArray);
+  const visibleSongs = allSongs.filter(song => (typeof playlistSongs.find(o => o.key == song.key) == 'undefined'));
+  const [checkboxes, setCheckboxes] = React.useState(new Array(visibleSongs.length).fill(0));
   const [, setUpdate] = React.useState(0);
 
   return (
@@ -49,6 +48,7 @@ export default function AddSong({ route, navigation }) {
         </View>
       </View>
       <FlatList
+        style={styles.flatList}
         data={visibleSongs}
         renderItem={({item, index}) => (
           <View elevation={20} style={styles.row}>
@@ -76,11 +76,23 @@ export default function AddSong({ route, navigation }) {
           </View>
         )}
       />
-      {/* <View style={styles.saveContainer}>
-        <TouchableOpacity onPress={() => navigation.navigate('Run', {playlists})}>
+      <View style={styles.saveContainer}>
+        <TouchableOpacity onPress={() => {
+          let songsToAdd = [];
+          visibleSongs.forEach((song, index) => {
+            if (checkboxes[index]) {
+              songsToAdd.push(song);
+            }
+          });
+          navigation.navigate({
+            name: mode,
+            params: { songs: songsToAdd },
+            merge: true,
+          });
+        }}>
           <Text style={styles.saveText}> Save </Text>
         </TouchableOpacity>
-      </View> */}
+      </View>
     </SafeAreaView>
   );
 }
@@ -122,13 +134,16 @@ const styles = StyleSheet.create({
     fontSize: 20,
     textAlign: 'center'
   },
+  flatList: {
+    height: Dimensions.get('window').height - 220,
+    flexGrow: 0
+  },
   row: {
     backgroundColor: 'red',
     padding: 8,
     marginVertical: 6,
     flexDirection: 'row',
   },
-
   songArtistView: {
     width: '50%'
   },
