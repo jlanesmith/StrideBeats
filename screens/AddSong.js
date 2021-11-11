@@ -7,14 +7,23 @@ export default function AddSong({ route, navigation }) {
   const playlist = route.params;
 
   const allSongs = [
-    {key: "Song 1", artist: "Artist 1", BPM: 160, path: "path/to/song1"}, 
-    {key: "Song 2", artist: "Artist 2", BPM: 110, path: "path/to/song2"},
-    {key: "Song 3", artist: "Artist 1", BPM: 160, path: "path/to/song3"}, 
-    {key: "Song 4", artist: "Artist 2", BPM: 110, path: "path/to/song4"},
-    {key: "Song 5", artist: "Artist 1", BPM: 160, path: "path/to/song5"}, 
-    {key: "Song 6", artist: "Artist 2", BPM: 110, path: "path/to/song6"},
-    {key: "Song 7", artist: "Artist 1", BPM: 160, path: "path/to/song7"}, 
-    {key: "Song 8", artist: "Artist 2", BPM: 110, path: "path/to/song8"},
+    {key: "Cold Shoulder", artist: "Adele", BPM: 110, path: "http://www.cs.mcgill.ca/~tcurti/Cold_Shoulder_slow.m4a"}, 
+    {key: "Footloose", artist: "Kenny Loggins", BPM: 174, path: "http://www.cs.mcgill.ca/~tcurti/Footloose_very_fast.m4a"},
+    {key: "Holding Out for a Hero", artist: "Bonnie Tyler", BPM: 150, path: "http://www.cs.mcgill.ca/~tcurti/Hero_fast.m4a"}, 
+    {key: "My Same", artist: "Adele", BPM: 126, path: "http://www.cs.mcgill.ca/~tcurti/My_Same_med.m4a"},
+    {key: "Mr. Brightside", artist: "The Killers", BPM: 148, path: "http://www.cs.mcgill.ca/~tcurti/brightside_fast.m4a"}, 
+    {key: "Take It All", artist: "Adele", BPM: 138, path: "http://www.cs.mcgill.ca/~tcurti/take_it_fast.m4a"},
+    {key: "Shake It Off", artist: "Taylor Swift", BPM: 162, path: "http://www.cs.mcgill.ca/~tcurti/Shake_it_Off.m4a"}, 
+    {key: "Rock and Roll Ain't Noise Pollution", artist: "AC/DC", BPM: 95, path: "http://www.cs.mcgill.ca/~tcurti/Rock_and_Roll.m4a"},
+    {key: "American Idiot", artist: "Green Day", BPM: 186, path: "http://www.cs.mcgill.ca/~tcurti/American_Idiot.m4a"},
+    {key: "James", artist: "Billy Joel", BPM: 140, path: "http://www.cs.mcgill.ca/~tcurti/James.m4a"},
+    {key: "Who Knew", artist: "Pink", BPM: 140, path: "http://www.cs.mcgill.ca/~tcurti/Who_Knew.m4a"},
+    {key: "White Wedding Part 1", artist: "Billy Idol", BPM: 147, path: "http://www.cs.mcgill.ca/~tcurti/White_Wedding.m4a"},
+    {key: "Born To Be Wild", artist: "Steppenwolf", BPM: 146, path: "http://www.cs.mcgill.ca/~tcurti/Born_To_Be_Wild.m4a"},
+    {key: "Livin on a Prayer", artist: "Bon Jovi", BPM: 123, path: "http://www.cs.mcgill.ca/~tcurti/Livin_on_a_Prayer.m4a"},
+    {key: "Edge of Glory", artist: "Lady Gaga", BPM: 128, path: "http://www.cs.mcgill.ca/~tcurti/Edge_of_Glory.m4a"},
+    {key: "Jessie's Girl", artist: "Rick Springfield", BPM: 132, path: "http://www.cs.mcgill.ca/~tcurti/Jessie_Girl.m4a"},
+    {key: "Trouble", artist: "Pink", BPM: 135, path: "http://www.cs.mcgill.ca/~tcurti/Trouble.m4a"},
   ]
 
   const emptyArray = new Array(allSongs.length).fill(0);
