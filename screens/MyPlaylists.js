@@ -35,12 +35,14 @@ export default function ViewPlaylists({ route, navigation }) {
             <Text style={styles.title}>{item.key}</Text>
             <View style={styles.iconViewContainer}>
               <View style={styles.iconView}>
-                <TouchableOpacity onPress={() => navigation.navigate('Edit Playlist', {mode: "Edit Playlist", playlist: item})}>
+                <TouchableOpacity onPress={() => 
+                  navigation.navigate('Edit Playlist', {mode: "Edit Playlist", playlist: item, allPlaylists: playlists})
+                }>
                   <Icon reverse name='edit' type='material' size={16} />
                 </TouchableOpacity>
                 <TouchableOpacity onPress={() => {
-                    setPlaylistToDelete(item.key);
-                  }}>
+                  setPlaylistToDelete(item.key);
+                }}>
                   <Icon reverse name='trash-can-outline' type='material-community' size={16} />
                 </TouchableOpacity>
               </View>
@@ -48,7 +50,9 @@ export default function ViewPlaylists({ route, navigation }) {
           </View>
         )}
       />
-      <TouchableOpacity style={styles.plusBotton} onPress={() => navigation.navigate('Create Playlist', {mode: "Create Playlist", playlist: {}})}>
+      <TouchableOpacity style={styles.plusBotton} onPress={() => 
+        navigation.navigate('Create Playlist', {mode: "Create Playlist", playlist: {}, allPlaylists: playlists})
+      }>
         <Icon name='plus' type='feather' size={40} color='black' />
       </TouchableOpacity>
       <Modal

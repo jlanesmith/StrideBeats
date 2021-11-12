@@ -1,13 +1,13 @@
 import React from 'react';
-import { SafeAreaView, StyleSheet, FlatList, Text, View, TouchableOpacity, TextInput } from 'react-native';
+import { SafeAreaView, StyleSheet, FlatList, Text, View, TouchableOpacity, TextInput, Modal } from 'react-native';
 import { Icon } from 'react-native-elements'
 
 export default function CreateEditPlaylist({ route, navigation }) {
-  const { mode, playlist } = route.params;
-
+  const { mode, playlist, allPlaylists } = route.params;
   const oldTitle = mode == "Create Playlist" ? "" : playlist.key;
   const [title, onChangeTitle] = React.useState(oldTitle);
   const [songs, setSongs] = React.useState(mode == "Create Playlist" ? [] : playlist.songs);
+  const [errorMessage, setErrorMessage] = React.useState("");
   const [, setUpdate] = React.useState(0);
 
   React.useEffect(() => {
@@ -70,17 +70,44 @@ export default function CreateEditPlaylist({ route, navigation }) {
         </View>
         <View style={styles.saveContainer}>        
           <TouchableOpacity onPress={() => {
-            let updatedPlaylist = {key: title, songs: songs};
-            navigation.navigate({
-              name: "My Playlists",
-              params: { playlist: updatedPlaylist, oldTitle: oldTitle},
-              merge: true,
-            });
+            if (title.trim() == "") {
+              setErrorMessage("Provide a name for your playlist first!");
+            } else if (typeof allPlaylists.find(o => o.key == title.trim()) != 'undefined') {
+              setErrorMessage("Sorry, a playlist with this name already exists!");
+            } else if (songs.length == 0) {
+              setErrorMessage("Add some songs to the playlist first!");             
+            } else {
+              navigation.navigate({
+                name: "My Playlists",
+                params: { playlist: {key: title.trim(), songs: songs}, oldTitle: oldTitle},
+                merge: true,
+              });
+            }
           }}>          
             <Text style={styles.saveText}> Save </Text>
           </TouchableOpacity>
         </View>
       </View>
+      <Modal
+        animationType="slide"
+        transparent={true}
+        visible={errorMessage != ""}
+        onRequestClose={() => {
+          setErrorMessage("");
+        }}> 
+        <View style={styles.modalContainer}>
+          <View style={styles.modalView}>
+            <Text style={styles.modalText}>{errorMessage}</Text>
+            <View style={styles.closeModalContainer}>
+              <TouchableOpacity onPress={() => {
+                setErrorMessage("");
+              }}>            
+                <Text style={styles.closeModalText}>Close</Text>
+              </TouchableOpacity>
+            </View>
+          </View>
+        </View>
+      </Modal>
     </SafeAreaView>
   );
 }
@@ -179,5 +206,35 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     fontSize: 24,
     margin: 10
+  },
+  modalContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  modalView: {
+    backgroundColor: 'white',
+    borderWidth: 2,
+    width: '80%',
+    alignItems: 'center'
+  },
+  modalText: {
+    textAlign: 'center',
+    margin: 20,
+    fontSize: 24
+  },
+  closeModalContainer: {
+    width: '30%',
+    margin: 15,
+    borderWidth: 1,
+    justifyContent: 'center',
+    backgroundColor: 'grey',
+    borderRadius: 16
+  },
+  closeModalText: {
+    color: 'white',
+    textAlign: 'center',
+    fontSize: 24,
+    margin: 10    
   }
 });
