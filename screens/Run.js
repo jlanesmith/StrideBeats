@@ -1,13 +1,15 @@
-import React, { Component } from 'react';
+import React, { Component, useEffect, useState } from 'react';
 import { Text, View } from 'react-native';
 
 import { TapGestureHandler, RotationGestureHandler, PanGestureHandler } from 'react-native-gesture-handler';
+import Pedometer from '@t2tx/react-native-universal-pedometer';
 import {
   LongPressGestureHandler,
   PinchGestureHandler,
   ScrollView,
   State,
 } from 'react-native-gesture-handler';
+import { monitorsteps } from '../components/monitorsteps'; // calculate the current runner's pace
 
 var songPlaying = null;
 
@@ -65,6 +67,7 @@ export class RunControl extends Component {
       if(Math.abs(deltaX) < Math.abs(deltaY)) {
         if (deltaY > 0) {
           console.log("entered increase")
+          const [increasestart,setincreasestart] = useState(Date.getTime()); // set start time to increase BPM
           //ADD THE HAPTIC BEHAVIOUR 
 
           if (!songState.speed_increase) {
@@ -76,6 +79,7 @@ export class RunControl extends Component {
           }
         } else {
           console.log("entered decrease")
+          const [decreasestart,setdecreasestart] = useState(Date.getTime()); // set start time to decrease BPM
           //ADD THE HAPTIC BEHAVIOUR
 
           if (!songState.speed_decrease) {
@@ -144,10 +148,16 @@ export class RunControl extends Component {
 
           console.log('increase song')
           //STOP THE INCREASE HAPtIC
+          const [increasestop,setincreasestop] = useState(Date.getTime());    // Set stop increase time (ms)
+          const timeincrease = increasestop-increasestart;                    // Find total time between start/stop increase commands (ms)
+          const [nextBPM,setNextBPM] = useState(currentBPM+(timeincrease/50)) // Add BPM increase to current BPM, set at 20 BPM increase per second 
           //CALCULATE HOW FAST
         } else {
           console.log('decrease song')
           //STOP THE DECREASE
+          const [decreasestop,setdecreasestop] = useState(Date.getTime());    // Set stop increase time (ms)
+          const timedecrease = decreasestop-decreasestart;                    // Find total time between start/stop increase commands (ms)
+          const [nextBPM,setNextBPM] = useState(currentBPM-(timedecrease/50)) // Add BPM increase to current BPM, set at 20 BPM increase per second 
           //CALCULATE HOW FAST
 
         }
