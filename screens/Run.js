@@ -9,15 +9,19 @@ import {
   State,
 } from 'react-native-gesture-handler';
 
-var songPlaying = null;
+import * as Haptics from 'expo-haptics';
+
+var currentBPM = 100;
+
+var nextSongBPM = -1;
 
 var audio = null;
 
 var songState = {
   firstSong: true,
   songPlaying: false,
-  prevSong: -1,
-  songNumber: 1,
+  prevSongKey: null,
+  currentSongKey: null,
   panStartX: -1,
   panStartY: -1,
   poll: 0,
@@ -25,11 +29,18 @@ var songState = {
   speed_decrease: false,
 };
 
+var timer = null;
+var iterationOfTimer = 0;
+var firstTimer = true;
+
+var interval = null;
+var BPMChange = 4;
+
 export class RunControl extends Component {
   doubleTapRef = React.createRef();
   _onPinchHandlerStateChange = event => {
     if (event.nativeEvent.state === State.ACTIVE) {
-      if(songState.songPlaying) {
+      if (songState.songPlaying) {
         songState.songPlaying = false
         //PAUSE THE SONG
       }
@@ -39,7 +50,7 @@ export class RunControl extends Component {
   _onSingleTap = event => {
     if (event.nativeEvent.state === State.ACTIVE) {
       alert(this.props.playlist.key)
-      if(songState.songPlaying) {
+      if (songState.songPlaying) {
         songState.songPlaying = false
         //PAUSE THE SONG
       } else {
@@ -53,6 +64,97 @@ export class RunControl extends Component {
       this.props.navigation.navigate('Home')
     }
   };
+  _onPanHandler = ({ nativeEvent }, seconds) => {
+
+    var deltaX = songState.panStartX - nativeEvent.x
+    var deltaY = songState.panStartY - nativeEvent.y
+    if (Math.abs(deltaX) < Math.abs(deltaY)) {
+      if (deltaY > 0) {
+        //ADD THE HAPTIC BEHAVIOUR 
+
+        if (firstTimer) {
+          Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Heavy)
+          firstTimer = false
+        }
+        if (timer === null) {
+          console.log(iterationOfTimer)
+          iterationOfTimer = iterationOfTimer + 2;
+          timer = setTimeout(function () {
+            Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Heavy)
+            timer = null
+          },
+            seconds
+          )
+        }
+
+        // const [state, setState] = useState([]);
+        // var myFunction = function () {
+
+        //   clearInterval(interval);
+
+        //   i = i + 2;
+        //   Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Heavy)
+        //   seconds = 1000 / ((currentBPM + i) / 60)
+        //   interval  = setInterval(myFunction, seconds);
+        // }
+        // setTimeout(function () {Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Heavy)}, seconds);
+        // console.log(interval)
+
+        // setTimeout(function () {
+        //   Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Heavy)
+        //   i = i + 2;
+        // },
+        //   1000 / ((currentBPM + i) / 60)
+        // )
+
+        // useEffect(() => {
+        //   const abortController = new AbortController();
+        //   const { signal } = abortController;
+
+        //   const apiCall = async path => {
+        //     try {
+        //       const request = await fetch(path, {
+        //         signal: signal,
+        //         method: 'GET',
+        //       });
+        //       const response = await request.json();
+        //       setState([response]);
+        //     } catch (e) {
+        //       if (!signal?.aborted) {
+        //         console.error(e);
+        //       }
+        //     }
+        //   };
+
+        //   apiCall('https://jsonplaceholder.typicode.com/posts/1');
+
+        //   return () => {
+        //     abortController.abort();
+        //   };
+        // }, [setState]);
+
+
+        if (!songState.speed_increase) {
+          songState.speed_increase = true
+        }
+
+        if (songState.speed_decrease) {
+          songState.speed_decrease = false
+        }
+      } else {
+        console.log("entered decrease")
+        //ADD THE HAPTIC BEHAVIOUR
+
+        if (!songState.speed_decrease) {
+          songState.speed_decrease = true
+        }
+
+        if (songState.speed_increase) {
+          songState.speed_increase = false
+        }
+      }
+    }
+  }
   _onPanHandlerStateChange = ({ nativeEvent }) => {
     if (nativeEvent.state === State.BEGAN) {
       songState.panStartX = nativeEvent.x
@@ -60,33 +162,58 @@ export class RunControl extends Component {
     }
 
     if (nativeEvent.state === State.ACTIVE) {
+
       var deltaX = songState.panStartX - nativeEvent.x
       var deltaY = songState.panStartY - nativeEvent.y
-      if(Math.abs(deltaX) < Math.abs(deltaY)) {
+      if (Math.abs(deltaX) < Math.abs(deltaY)) {
         if (deltaY > 0) {
-          console.log("entered increase")
-          //ADD THE HAPTIC BEHAVIOUR 
+          var i = 0
+          var myFunction = function () {
 
-          if (!songState.speed_increase) {
-            songState.speed_increase = true
-          }
+            clearInterval(interval);
 
-          if (songState.speed_decrease) {
-            songState.speed_decrease = false
+            i = i + BPMChange;
+            nextSongBPM = i + currentBPM;
+            console.log(nextSongBPM)
+            Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Heavy)
+            
+            interval = setInterval(myFunction, 1000 / ((currentBPM + i) / 60));
           }
-        } else {
-          console.log("entered decrease")
-          //ADD THE HAPTIC BEHAVIOUR
+          Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Heavy)
+          interval = setInterval(myFunction, 1000 / ((currentBPM + i) / 60));
+        
+        if (!songState.speed_increase) {
+          songState.speed_increase = true
+        }
 
-          if (!songState.speed_decrease) {
-            songState.speed_decrease = true
-          }
+        if (songState.speed_decrease) {
+          songState.speed_decrease = false
+        }
+      } else {
+        var i = 0
+        var myFunction = function () {
 
-          if (songState.speed_increase) {
-            songState.speed_increase = false
-          }
+          clearInterval(interval);
+
+          i = i + BPMChange;
+          nextSongBPM = i + currentBPM;
+          Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Heavy)
+          
+          interval = setInterval(myFunction, 1000 / ((currentBPM - i) / 60));
+        }
+        Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Heavy)
+        interval = setInterval(myFunction, 1000 / ((currentBPM - i) / 60));
+
+
+        if (!songState.speed_decrease) {
+          songState.speed_decrease = true
+        }
+
+        if (songState.speed_increase) {
+          songState.speed_increase = false
         }
       }
+    }
     }
 
     if (nativeEvent.state === State.END) {
@@ -96,10 +223,10 @@ export class RunControl extends Component {
       if (Math.abs(deltaX) >= Math.abs(deltaY)) {
         if (deltaX < 0) {
           console.log('skip to prev')
-          if (songState.prevSong != -1) {
-            var temp = songState.songNumber
-            songState.songNumber = songState.prevSong
-            songState.prevSong = temp
+          if (songState.prevSongKey != null) {
+            var temp = songState.currentSongKey
+            songState.currentSongKey = songState.prevSongKey
+            songState.prevSongKey = temp
             songState.firstSong = true
             if (audio != null) {
               audio.pause()
@@ -111,7 +238,7 @@ export class RunControl extends Component {
 
           console.log('skip to next')
 
-          songState.prevSong = songState.songNumber
+          songState.prevSongKey = songState.currentSongKey
 
           if (songState.speed_increase) {
             songState.speed_increase = false
@@ -140,14 +267,21 @@ export class RunControl extends Component {
 
         }
       } else {
+        iterationOfTimer = 0;
+        timer = null;
+        firstTimer = true;
+        clearInterval(interval);
+        interval = null;
         if (deltaY > 0) {
 
           console.log('increase song')
-          //STOP THE INCREASE HAPtIC
+          //CONFIRM THE INCREASE HAPtIC
+          Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success)
           //CALCULATE HOW FAST
         } else {
           console.log('decrease song')
           //STOP THE DECREASE
+          Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success)
           //CALCULATE HOW FAST
 
         }
@@ -157,11 +291,18 @@ export class RunControl extends Component {
 
   };
   render() {
+    const pan = React.createRef();
+    const longPress = React.createRef();
     return (
       <PinchGestureHandler
         onHandlerStateChange={this._onPinchHandlerStateChange}>
         <PanGestureHandler
-          onHandlerStateChange={this._onPanHandlerStateChange}>
+          ref={pan}
+          simultaneousHandlers={longPress}
+          onHandlerStateChange={this._onPanHandlerStateChange}
+        // onGestureEvent={
+        //   (e) => { this._onPanHandler(e, 1000 / ((iterationOfTimer + currentBPM) / 60)) }}
+        >
           <TapGestureHandler
             onHandlerStateChange={this._onSingleTap}
             waitFor={this.doubleTapRef}>
