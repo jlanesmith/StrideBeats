@@ -209,8 +209,6 @@ export class RunControl extends Component {
           ref={pan}
           simultaneousHandlers={longPress}
           onHandlerStateChange={this._onPanHandlerStateChange}
-        // onGestureEvent={
-        //   (e) => { this._onPanHandler(e, 1000 / ((iterationOfTimer + currentBPM) / 60)) }}
         >
           <TapGestureHandler
             onHandlerStateChange={this._onSingleTap}
