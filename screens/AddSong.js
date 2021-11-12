@@ -1,7 +1,7 @@
 import React from 'react';
 import { SafeAreaView, StyleSheet, FlatList, Text, View, TouchableOpacity } from 'react-native';
 import { Icon, CheckBox } from 'react-native-elements'
-import {Dimensions} from 'react-native';
+import { Dimensions } from 'react-native';
 
 
 export default function AddSong({ route, navigation }) {
@@ -27,6 +27,14 @@ export default function AddSong({ route, navigation }) {
     {key: "Trouble", artist: "Pink", BPM: 135, path: "http://www.cs.mcgill.ca/~tcurti/Trouble.m4a"},
   ]
 
+  // let visibleSongs = [];
+  // allSongs.forEach(song => {
+  //   if (!playlistSongs.find(element => element.key == song.key)) {
+  //     // console.log(song.key)
+  //     // console.log(playlistSongs.find(element => element.key == song.key))
+  //     visibleSongs.push(song);
+  //   }
+  // });
   const visibleSongs = allSongs.filter(song => (typeof playlistSongs.find(o => o.key == song.key) == 'undefined'));
   const [checkboxes, setCheckboxes] = React.useState(new Array(visibleSongs.length).fill(0));
   const [, setUpdate] = React.useState(0);
@@ -76,22 +84,34 @@ export default function AddSong({ route, navigation }) {
           </View>
         )}
       />
-      <View style={styles.saveContainer}>
-        <TouchableOpacity onPress={() => {
-          let songsToAdd = [];
-          visibleSongs.forEach((song, index) => {
-            if (checkboxes[index]) {
-              songsToAdd.push(song);
-            }
-          });
-          navigation.navigate({
-            name: mode,
-            params: { songs: songsToAdd },
-            merge: true,
-          });
-        }}>
-          <Text style={styles.saveText}> Save </Text>
-        </TouchableOpacity>
+      <View style={styles.bottomContainer}>
+        <View style={styles.cancelContainer}>
+          <TouchableOpacity onPress={() => {
+            navigation.navigate({
+              name: mode,
+              merge: true,
+            });
+          }}>            
+            <Text style={styles.cancelText}> Cancel </Text>
+          </TouchableOpacity>
+        </View>
+        <View style={styles.saveContainer}>
+          <TouchableOpacity onPress={() => {
+            let songsToAdd = [];
+            visibleSongs.forEach((song, index) => {
+              if (checkboxes[index]) {
+                songsToAdd.push(song);
+              }
+            });
+            navigation.navigate({
+              name: mode,
+              params: { songs: songsToAdd },
+              merge: true,
+            });
+          }}>
+            <Text style={styles.saveText}> Save </Text>
+          </TouchableOpacity>
+        </View>
       </View>
     </SafeAreaView>
   );
@@ -135,7 +155,7 @@ const styles = StyleSheet.create({
     textAlign: 'center'
   },
   flatList: {
-    height: Dimensions.get('window').height - 220,
+    height: Dimensions.get('window').height - 210,
     flexGrow: 0
   },
   row: {
@@ -163,9 +183,28 @@ const styles = StyleSheet.create({
     color: 'white',
     fontSize: 18,
   },
+
+  bottomContainer: {
+    flexDirection: 'row',
+    justifyContent: 'center'
+  },
+  cancelContainer: {
+    width: '30%',
+    margin: 15,
+    borderWidth: 1,
+    justifyContent: 'center',
+    backgroundColor: 'grey',
+    borderRadius: 12
+  },
+  cancelText: {
+    color: 'white',
+    textAlign: 'center',
+    fontSize: 24,
+    margin: 10
+  },
   saveContainer: {
-    height: 60,
-    margin: 20,
+    width: '30%',
+    margin: 15,
     borderWidth: 1,
     justifyContent: 'center',
     backgroundColor: 'white',
@@ -174,6 +213,7 @@ const styles = StyleSheet.create({
   saveText: {
     color: 'black',
     textAlign: 'center',
-    fontSize: 24
+    fontSize: 24,
+    margin: 10
   }
 });

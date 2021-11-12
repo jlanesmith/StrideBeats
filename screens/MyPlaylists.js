@@ -4,8 +4,27 @@ import { Icon } from 'react-native-elements'
 
 
 export default function ViewPlaylists({ route, navigation }) {
-  const { playlists } = route.params;
 
+  const [playlists, setPlaylists] = React.useState(route.params.playlists);
+  const [, setUpdate] = React.useState(0);
+
+  React.useEffect(() => {
+    if (route.params?.playlist) {
+      let updatedPlaylists = playlists;
+      if (route.params?.oldTitle == "") {
+        updatedPlaylists.push(route.params?.playlist)
+      } else {
+        playlists.forEach((playlist, index) => {
+          if (playlist.key == route.params?.oldTitle) {
+            updatedPlaylists[index] = route.params?.playlist;
+          }
+        });
+      }
+      setPlaylists(updatedPlaylists);
+      setUpdate(update => update + 1)
+    }
+  }, [route.params?.playlist]);
+  
   return (
     <SafeAreaView style={styles.container}>
       <FlatList

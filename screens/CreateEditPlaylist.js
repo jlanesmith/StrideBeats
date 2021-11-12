@@ -4,7 +4,9 @@ import { SafeAreaView, StyleSheet, FlatList, Text, View, TouchableOpacity, TextI
 
 export default function CreateEditPlaylist({ route, navigation }) {
   const { mode, playlist } = route.params;
-  const [text, onChangeText] = React.useState(mode == "Create Playlist" ? "" : playlist.key);
+
+  const oldTitle = mode == "Create Playlist" ? "" : playlist.key;
+  const [title, onChangeTitle] = React.useState(oldTitle);
   const [songs, setSongs] = React.useState(mode == "Create Playlist" ? [] : playlist.songs);
 
   React.useEffect(() => {
@@ -19,12 +21,12 @@ export default function CreateEditPlaylist({ route, navigation }) {
         <View style={styles.textInputView}>
           <TextInput
             style={styles.textInput}
-            onChangeText={onChangeText}
-            value={text}
+            onChangeText={onChangeTitle}
+            value={title}
             placeholder="Type playlist title"
           />
         </View>
-        <TouchableOpacity style={styles.addSongButton} onPress={() => navigation.navigate('Add Song', { mode: mode, playlistSongs: playlist.songs })}>
+        <TouchableOpacity style={styles.addSongButton} onPress={() => navigation.navigate('Add Song', { mode: mode, playlistSongs: songs })}>
           <Text style={styles.addSongText}> Add </Text>
           <Text style={styles.addSongText}> Song </Text>
         </TouchableOpacity>
@@ -39,8 +41,15 @@ export default function CreateEditPlaylist({ route, navigation }) {
           </View>
         )}
       />
-      <View style={styles.saveContainer}>
-        <TouchableOpacity onPress={() => navigation.navigate('Run', {playlists})}>
+      <View style={styles.saveContainer}>        
+        <TouchableOpacity onPress={() => {
+          let updatedPlaylist = {key: title, songs: songs};
+          navigation.navigate({
+            name: "My Playlists",
+            params: { playlist: updatedPlaylist, oldTitle: oldTitle},
+            merge: true,
+          });
+        }}>          
           <Text style={styles.saveText}> Save </Text>
         </TouchableOpacity>
       </View>
