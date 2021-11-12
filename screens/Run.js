@@ -2,14 +2,16 @@ import React, { Component, useEffect, useState } from 'react';
 import { Text, View } from 'react-native';
 
 import { TapGestureHandler, RotationGestureHandler, PanGestureHandler } from 'react-native-gesture-handler';
-import Pedometer from '@t2tx/react-native-universal-pedometer';
+//import Pedometer from '@t2tx/react-native-universal-pedometer';
 import {
   LongPressGestureHandler,
   PinchGestureHandler,
   ScrollView,
   State,
 } from 'react-native-gesture-handler';
-import { monitorsteps } from '../components/monitorsteps'; // calculate the current runner's pace
+//import { monitorsteps } from '../components/monitorsteps'; // calculate the current runner's pace
+import ReactNativeHapticFeedback from "react-native-haptic-feedback";
+import { getCurrentTime } from '../components/getCurrentTime';
 
 var songPlaying = null;
 
@@ -26,6 +28,13 @@ var songState = {
   speed_increase: false,
   speed_decrease: false,
 };
+
+var timeKeep = {
+  increasestart: 0,
+  increasestop: 0,
+  decreasestart: 0,
+  decreasestop: 0,
+}
 
 export class RunControl extends Component {
   doubleTapRef = React.createRef();
@@ -67,7 +76,12 @@ export class RunControl extends Component {
       if(Math.abs(deltaX) < Math.abs(deltaY)) {
         if (deltaY > 0) {
           console.log("entered increase")
-          const [increasestart,setincreasestart] = useState(Date.getTime()); // set start time to increase BPM
+          timeKeep.increasestart = getCurrentTime(); // set start time to increase BPM
+          //const options = {
+          //  enableVibrateFallback: true,
+          //  ignoreAndroidSystemSettings: false
+          //};
+          //ReactNativeHapticFeedback.trigger("impactLight", options);
           //ADD THE HAPTIC BEHAVIOUR 
 
           if (!songState.speed_increase) {
@@ -79,7 +93,7 @@ export class RunControl extends Component {
           }
         } else {
           console.log("entered decrease")
-          const [decreasestart,setdecreasestart] = useState(Date.getTime()); // set start time to decrease BPM
+          timeKeep.decreasestart = getCurrentTime(); // set start time to decrease BPM
           //ADD THE HAPTIC BEHAVIOUR
 
           if (!songState.speed_decrease) {
@@ -148,16 +162,18 @@ export class RunControl extends Component {
 
           console.log('increase song')
           //STOP THE INCREASE HAPtIC
-          const [increasestop,setincreasestop] = useState(Date.getTime());    // Set stop increase time (ms)
-          const timeincrease = increasestop-increasestart;                    // Find total time between start/stop increase commands (ms)
-          const [nextBPM,setNextBPM] = useState(currentBPM+(timeincrease/50)) // Add BPM increase to current BPM, set at 20 BPM increase per second 
+          timeKeep.increasestop = getCurrentTime();    // Set stop increase time (ms)
+          var timeincrease = timeKeep.increasestop-timeKeep.increasestart;                    // Find total time between start/stop increase commands (ms)
+          //const [nextBPM,setNextBPM] = useState(currentBPM+(Math.round(timeincrease/50))) // Add BPM increase to current BPM, set at 20 BPM increase per second 
           //CALCULATE HOW FAST
+          console.log(timeincrease)
         } else {
           console.log('decrease song')
           //STOP THE DECREASE
-          const [decreasestop,setdecreasestop] = useState(Date.getTime());    // Set stop increase time (ms)
-          const timedecrease = decreasestop-decreasestart;                    // Find total time between start/stop increase commands (ms)
-          const [nextBPM,setNextBPM] = useState(currentBPM-(timedecrease/50)) // Add BPM increase to current BPM, set at 20 BPM increase per second 
+          timeKeep.decreasestop = getCurrentTime();    // Set stop increase time (ms)
+          var timedecrease = timeKeep.decreasestop-timeKeep.decreasestart;                    // Find total time between start/stop increase commands (ms)
+          console.log(timedecrease)
+          //const [nextBPM,setNextBPM] = useState(currentBPM-Math.round((timedecrease/50))) // Add BPM increase to current BPM, set at 20 BPM increase per second 
           //CALCULATE HOW FAST
 
         }
