@@ -77,11 +77,6 @@ export class RunControl extends Component {
         if (deltaY > 0) {
           console.log("entered increase")
           timeKeep.increasestart = getCurrentTime(); // set start time to increase BPM
-          //const options = {
-          //  enableVibrateFallback: true,
-          //  ignoreAndroidSystemSettings: false
-          //};
-          //ReactNativeHapticFeedback.trigger("impactLight", options);
           //ADD THE HAPTIC BEHAVIOUR 
 
           if (!songState.speed_increase) {
