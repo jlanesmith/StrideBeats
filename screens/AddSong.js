@@ -183,7 +183,6 @@ const styles = StyleSheet.create({
     color: 'white',
     fontSize: 18,
   },
-
   bottomContainer: {
     flexDirection: 'row',
     justifyContent: 'center'

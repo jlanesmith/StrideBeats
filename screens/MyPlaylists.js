@@ -21,7 +21,7 @@ export default function ViewPlaylists({ route, navigation }) {
         });
       }
       setPlaylists(updatedPlaylists);
-      setUpdate(update => update + 1)
+      setUpdate(update => update + 1);
     }
   }, [route.params?.playlist]);
   
@@ -29,7 +29,7 @@ export default function ViewPlaylists({ route, navigation }) {
     <SafeAreaView style={styles.container}>
       <FlatList
         data={playlists}
-        renderItem={({item}) => (
+        renderItem={({item, index}) => (
           <View style={styles.row} onPress={() => navigation.navigate('Run', {playlists})}>
             <Text style={styles.title}>{item.key}</Text>
             <View style={styles.iconViewContainer}>
@@ -37,7 +37,12 @@ export default function ViewPlaylists({ route, navigation }) {
                 <TouchableOpacity onPress={() => navigation.navigate('Edit Playlist', {mode: "Edit Playlist", playlist: item})}>
                   <Icon reverse name='edit' type='material' size={16} />
                 </TouchableOpacity>
-                <TouchableOpacity onPress={() => {console.log("trash")}}>
+                <TouchableOpacity onPress={() => {
+                    let updatedPlaylists = playlists;
+                    updatedPlaylists.splice(index, 1);
+                    setPlaylists(updatedPlaylists);
+                    setUpdate(update => update + 1);
+                  }}>
                   <Icon reverse name='trash-can-outline' type='material-community' size={16} />
                 </TouchableOpacity>
               </View>
