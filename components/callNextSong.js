@@ -1,40 +1,58 @@
 import React, { Component } from 'react';
 
 
-export function callNextSong({nextSongBPM, playlist, songState,currentPace}) {
+export function callNextSong({nextSongBPM, playlist}) {
     var nextSong = [];
     const BPMlist = Array.from(Array(playlist.props.children.length).keys());
     for (var i = 0 ; i < playlist.props.children.length ; i++ ){
     BPMlist[i] = playlist.props.children[i].BPM;
     }
+    console.log('BPMlist')
     console.log(BPMlist)
-    if (songState.speed_increase || songState.speed_decrease){
-        console.log(songState.speed_increase)
-        console.log(songState.speed_decrease)
-        // If song BPM was manually changed, do nothing
-    } else {
-        nextSongBPM = currentPace;
-    }
     
     var BPMdifftemp = BPMlist.map((x => x - nextSongBPM));
     var BPMdiff = BPMdifftemp;
     for (var i = 0; i < BPMdifftemp.length ; i++){
         BPMdiff[i] = Math.abs(BPMdifftemp[i]);
     }
+    console.log('nextSongBPM')
     console.log(nextSongBPM)
-    console.log(BPMdiff)
 
     var diffMin = Math.min(...BPMdiff);
+    console.log('minimum difference')
     console.log(diffMin)
-    var indmin = BPMdiff.find(function (element) {
-        return element ===  diffMin;
-      });
+    var indmin = [];
+
+    // find the indeces of minimum elements
+    var idx = BPMdiff.indexOf(diffMin);
+    while (idx != -1) {
+    indmin.push(idx);
+    idx = BPMdiff.indexOf(diffMin, idx + 1);
+    }
+
+    // find the number of minimum elements
+    var minCount = 0;
+    for (var i = 0; i < BPMdifftemp.length; i++){
+        if(BPMdiff[i] == diffMin){
+            minCount = minCount+1;
+        }
+    }
+
+    
+    console.log('indmin')
     console.log(indmin)
-    if (indmin.length == 1) {
+    console.log('minCount')
+    console.log(minCount)
+    if (minCount == 1) {
+        console.log('Next Song')
         console.log(playlist.props.children[indmin])
         return (nextSong = playlist.props.children[indmin]);
     } else {
-        var indrand = indmin[Math.floor(Math.random() * indmin.length)];
+        var indrand = indmin[Math.floor(Math.random() * minCount)];
+        console.log("random index value")
+        console.log(indrand)
+        console.log('Next Song')
+        console.log(playlist.props.children[indrand])
         return (nextSong = playlist.props.children[indrand])
     }
 
