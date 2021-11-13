@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Text, View } from 'react-native';
+import { RefreshControlBase, Text, View } from 'react-native';
 
 import { TapGestureHandler, RotationGestureHandler, PanGestureHandler } from 'react-native-gesture-handler';
 import {
@@ -10,10 +10,23 @@ import {
 } from 'react-native-gesture-handler';
 
 import * as Haptics from 'expo-haptics';
+import { callNextSong } from '../components/callNextSong';
+//import TrackPlayer, {
+//  Capability,
+//  Event,
+//  RepeatMode,
+//  usePlaybackState,
+//  useProgress,
+// useTrackPlayerEvents,
+//} from 'react-native-track-player';
+
+var currentPace = 0; //placeholder variable 
 
 var currentBPM = 100;
 
 var nextSongBPM = -1;
+
+var nextSong = [];
 
 var audio = null;
 
@@ -28,6 +41,12 @@ var songState = {
   speed_increase: false,
   speed_decrease: false,
 };
+
+//const setupPlayer = async() =>{
+ // await TrackPlayer.setupPlayer;
+//
+//  await TrackPlayer.add()
+//}
 
 var timer = null;
 var iterationOfTimer = 0;
@@ -150,10 +169,12 @@ export class RunControl extends Component {
           songState.prevSongKey = songState.currentSongKey
 
           if (songState.speed_increase) {
+            songState.prevSongKey = songState.currentSongKey;
+            var playlist = <RunControl>{this.props.playlist.songs}</RunControl>;
+            nextSong = callNextSong({nextSongBPM,playlist,songState,currentPace});
             songState.speed_increase = false
-
-            // Figure out the next song to play based off of BPM increase
-
+            // Figure out the next song to play based off of BPM increase            
+            console.log(nextSong)
           } else if (songState.speed_decrease) {
             songState.speed_decrease = false
 
@@ -229,6 +250,13 @@ export class RunControl extends Component {
 export default function RunScreen({ route, navigation }) {
 
   const selectedPlaylist = route.params;
+  const BPMlist = Array.from(Array(selectedPlaylist.songs.length).keys());
+  //console.log(selectedPlaylist.songs.length)
+  for (var i = 0 ; i < selectedPlaylist.songs.length ; i++ ){
+    BPMlist[i] = selectedPlaylist.songs[i].BPM;
+    // console.log(selectedPlaylist.songs[i].BPM)
+  }
+  // console.log(BPMlist)
 
   return (
     <RunControl playlist={selectedPlaylist} navigation={navigation}></RunControl>
