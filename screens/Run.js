@@ -20,7 +20,7 @@ import { callNextSong } from '../components/callNextSong';
 // useTrackPlayerEvents,
 //} from 'react-native-track-player';
 
-var currentPace = 0; //placeholder variable 
+var currentPace = 150; //placeholder variable 
 
 var currentBPM = 100;
 
@@ -171,11 +171,15 @@ export class RunControl extends Component {
           if (songState.speed_increase) {
             songState.prevSongKey = songState.currentSongKey;
             var playlist = <RunControl>{this.props.playlist.songs}</RunControl>;
-            nextSong = callNextSong({nextSongBPM,playlist,songState,currentPace});
-            songState.speed_increase = false
-            // Figure out the next song to play based off of BPM increase            
-            console.log(nextSong)
+            nextSong = callNextSong({nextSongBPM,playlist});
+            songState.speed_increase = false;
+            songState.currentSongKey = null;  // INSERT NEW CURRENT SONG KEY
+            // Figure out the next song to play based off of BPM increase
           } else if (songState.speed_decrease) {
+            songState.prevSongKey = songState.currentSongKey;
+            var playlist = <RunControl>{this.props.playlist.songs}</RunControl>;
+            nextSong = callNextSong({nextSongBPM,playlist});
+            songState.currentSongKey = null;  // INSERT NEW CURRENT SONG KEY
             songState.speed_decrease = false
 
             // Figure out the next song to play based off of BPM decrease
@@ -184,7 +188,11 @@ export class RunControl extends Component {
 
             //NO INCREASE/DECREASE 
             // Select a song at the BPM of the person's current pace
-
+            nextSongBPM = currentPace;
+            songState.prevSongKey = songState.currentSongKey;
+            var playlist = <RunControl>{this.props.playlist.songs}</RunControl>;
+            nextSong = callNextSong({nextSongBPM,playlist});
+            songState.currentSongKey = null;  // INSERT NEW CURRENT SONG KEY
           }
           songState.firstSong = true
           //firstSong reloads the song (starts it from the begining)
