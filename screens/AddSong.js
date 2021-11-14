@@ -2,7 +2,7 @@ import React from 'react';
 import { SafeAreaView, StyleSheet, FlatList, Text, View, TouchableOpacity } from 'react-native';
 import { Icon, CheckBox } from 'react-native-elements'
 import { Dimensions } from 'react-native';
-
+import Search from './Search'
 
 export default function AddSong({ route, navigation }) {
   const { mode, playlistSongs } = route.params;
@@ -27,15 +27,18 @@ export default function AddSong({ route, navigation }) {
     {key: "Trouble", artist: "Pink", BPM: 135, path: "http://www.cs.mcgill.ca/~tcurti/Trouble.m4a"},
   ]
 
-  // let visibleSongs = [];
-  // allSongs.forEach(song => {
-  //   if (!playlistSongs.find(element => element.key == song.key)) {
-  //     // console.log(song.key)
-  //     // console.log(playlistSongs.find(element => element.key == song.key))
-  //     visibleSongs.push(song);
-  //   }
-  // });
-  const visibleSongs = allSongs.filter(song => (typeof playlistSongs.find(o => o.key == song.key) == 'undefined'));
+  const [openSearch, setOpenSearch] = React.useState(false);
+  const [searchTitle, setSearchTitle] = React.useState("");
+  const [searchArtist, setSearchArtist] = React.useState("");
+  const [searchBpmMin, setSearchBpmMin] = React.useState(0);
+  const [searchBpmMax, setSearchBpmMax] = React.useState(1000);
+
+  const visibleSongs = allSongs
+    .filter(song => (typeof playlistSongs.find(o => o.key == song.key) == 'undefined')) // Only songs that aren't in the playlist
+    .filter(song => song.key.toLowerCase().includes(searchTitle.toLowerCase()))
+    .filter(song => song.artist.toLowerCase().includes(searchArtist.toLowerCase()))
+    .filter(song => song.BPM >= searchBpmMin)
+    .filter(song => song.BPM <= searchBpmMax);
   const [checkboxes, setCheckboxes] = React.useState(new Array(visibleSongs.length).fill(0));
   const [, setUpdate] = React.useState(0);
 
@@ -45,12 +48,20 @@ export default function AddSong({ route, navigation }) {
         <View style={styles.topView}>
           <View style={styles.searchContainer}>
             <View style={styles.searchButton}> 
-              <TouchableOpacity onPress={() => {console.log("trash")}}>
+              <TouchableOpacity onPress={() => setOpenSearch(true)}>
                 <Icon name='search' type='material-icons' size={40} />
               </TouchableOpacity>
             </View>
           </View>
-          <TouchableOpacity style={styles.clearSearchButton} onPress={() => navigation.navigate('Add Song', {})}>
+          <TouchableOpacity 
+            style={styles.clearSearchButton} 
+            onPress={() => {
+              setSearchTitle("");
+              setSearchArtist("");
+              setSearchBpmMin(0);
+              setSearchBpmMax(1000);
+            }}
+          >
             <Text style={styles.clearSearchText}> Clear Search </Text>
           </TouchableOpacity>
         </View>
@@ -113,6 +124,17 @@ export default function AddSong({ route, navigation }) {
           </TouchableOpacity>
         </View>
       </View>
+      <Search 
+        open={openSearch} 
+        onCancel={() => setOpenSearch(false)} 
+        onSearch={(title, artist, bpmMin, bpmMax) => {
+          setSearchTitle(title);
+          setSearchArtist(artist);
+          setSearchBpmMin(bpmMin == "" ? 0 : bpmMin.toString());
+          setSearchBpmMax(bpmMax == "" ? 1000 :bpmMax.toString());
+          setOpenSearch(false);
+        }}
+      />
     </SafeAreaView>
   );
 }
