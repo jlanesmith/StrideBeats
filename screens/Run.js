@@ -11,14 +11,6 @@ import {
 
 import * as Haptics from 'expo-haptics';
 import { callNextSong } from '../components/callNextSong';
-//import TrackPlayer, {
-//  Capability,
-//  Event,
-//  RepeatMode,
-//  usePlaybackState,
-//  useProgress,
-// useTrackPlayerEvents,
-//} from 'react-native-track-player';
 
 var currentPace = 150; //placeholder variable 
 
@@ -41,12 +33,6 @@ var songState = {
   speed_increase: false,
   speed_decrease: false,
 };
-
-//const setupPlayer = async() =>{
- // await TrackPlayer.setupPlayer;
-//
-//  await TrackPlayer.add()
-//}
 
 var timer = null;
 var iterationOfTimer = 0;
@@ -258,14 +244,6 @@ export class RunControl extends Component {
 export default function RunScreen({ route, navigation }) {
 
   const selectedPlaylist = route.params;
-  const BPMlist = Array.from(Array(selectedPlaylist.songs.length).keys());
-  //console.log(selectedPlaylist.songs.length)
-  for (var i = 0 ; i < selectedPlaylist.songs.length ; i++ ){
-    BPMlist[i] = selectedPlaylist.songs[i].BPM;
-    // console.log(selectedPlaylist.songs[i].BPM)
-  }
-  // console.log(BPMlist)
-
   return (
     <RunControl playlist={selectedPlaylist} navigation={navigation}></RunControl>
   );
