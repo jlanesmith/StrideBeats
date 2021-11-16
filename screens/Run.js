@@ -12,9 +12,14 @@ import {
 import * as Haptics from 'expo-haptics';
 import { callNextSong } from '../components/callNextSong';
 
-var currentPace = 150; //placeholder variable 
+import { Audio } from 'expo-av';
 
-var currentBPM = 100;
+import {allSongs} from './AddSong'
+
+
+var currentPace = 140; //placeholder variable 
+
+var currentBPM = 140;
 
 var nextSongBPM = -1;
 
@@ -25,8 +30,8 @@ var audio = null;
 var songState = {
   firstSong: true,
   songPlaying: false,
-  prevSongKey: null,
-  currentSongKey: null,
+  prevSong: null,
+  currentSong: null,
   panStartX: -1,
   panStartY: -1,
   poll: 0,
@@ -41,26 +46,41 @@ var firstTimer = true;
 var interval = null;
 var BPMChange = 4;
 
+const sound = new Audio.Sound();
+
+
+
 export class RunControl extends Component {
   doubleTapRef = React.createRef();
-  _onPinchHandlerStateChange = event => {
+  _onPinchHandlerStateChange = async event => {
     if (event.nativeEvent.state === State.ACTIVE) {
       if (songState.songPlaying) {
         songState.songPlaying = false
-        //PAUSE THE SONG
+        await sound.pauseAsync()
       }
       this.props.navigation.navigate('Home');
     }
   };
-  _onSingleTap = event => {
+  _onSingleTap = async event => {
     if (event.nativeEvent.state === State.ACTIVE) {
-      alert(this.props.playlist.key)
       if (songState.songPlaying) {
         songState.songPlaying = false
         //PAUSE THE SONG
+        await sound.pauseAsync()
       } else {
         songState.songPlaying = true
         //PLAY THE SONG
+        var playlist = this.props.playlist;
+        if (songState.currentSong == null) {
+          songState.currentSong = callNextSong({currentBPM, playlist})
+        }
+        if(songState.firstSong) {
+            await Audio.setAudioModeAsync({ playsInSilentModeIOS: true });
+            await sound.loadAsync(songState.currentSong.path);
+            songState.firstSong = false;
+        }
+        await sound.playAsync();
+
       }
     }
   };
@@ -70,7 +90,7 @@ export class RunControl extends Component {
     }
   };
 
-  _onPanHandlerStateChange = ({ nativeEvent }) => {
+  _onPanHandlerStateChange = async ({ nativeEvent }) => {
     if (nativeEvent.state === State.BEGAN) {
       songState.panStartX = nativeEvent.x
       songState.panStartY = nativeEvent.y
@@ -137,15 +157,22 @@ export class RunControl extends Component {
       if (Math.abs(deltaX) >= Math.abs(deltaY)) {
         if (deltaX < 0) {
           console.log('skip to prev')
-          if (songState.prevSongKey != null) {
-            var temp = songState.currentSongKey
-            songState.currentSongKey = songState.prevSongKey
-            songState.prevSongKey = temp
+          if (songState.prevSong != null) {
+            var temp = songState.currentSong
+            songState.currentSong = songState.prevSong
+            songState.prevSong = temp
             songState.firstSong = true
-            if (audio != null) {
-              audio.pause()
+            if (songState.songPlaying) {
+              sound.pauseAsync()
             }
-            //PLAY THE SONG
+
+            
+            if(songState.firstSong) {
+              await Audio.setAudioModeAsync({ playsInSilentModeIOS: true });
+              await sound.loadAsync(songState.currentSong.path);
+              songState.firstSong = false;
+            }
+            await sound.playAsync();
           }
           //left swipe (skip to Next Song)
         } else {
@@ -155,17 +182,17 @@ export class RunControl extends Component {
           songState.prevSongKey = songState.currentSongKey
 
           if (songState.speed_increase) {
-            songState.prevSongKey = songState.currentSongKey;
+            songState.prevSong = songState.currentSong;
             var playlist = <RunControl>{this.props.playlist.songs}</RunControl>;
             nextSong = callNextSong({nextSongBPM,playlist});
             songState.speed_increase = false;
-            songState.currentSongKey = null;  // INSERT NEW CURRENT SONG KEY
+            songState.currentSong = nextSong;  // INSERT NEW CURRENT SONG KEY
             // Figure out the next song to play based off of BPM increase
           } else if (songState.speed_decrease) {
-            songState.prevSongKey = songState.currentSongKey;
+            songState.prevSong = songState.currentSong;
             var playlist = <RunControl>{this.props.playlist.songs}</RunControl>;
             nextSong = callNextSong({nextSongBPM,playlist});
-            songState.currentSongKey = null;  // INSERT NEW CURRENT SONG KEY
+            songState.currentSong = nextSong;  // INSERT NEW CURRENT SONG KEY
             songState.speed_decrease = false
 
             // Figure out the next song to play based off of BPM decrease
@@ -178,16 +205,21 @@ export class RunControl extends Component {
             songState.prevSongKey = songState.currentSongKey;
             var playlist = <RunControl>{this.props.playlist.songs}</RunControl>;
             nextSong = callNextSong({nextSongBPM,playlist});
-            songState.currentSongKey = null;  // INSERT NEW CURRENT SONG KEY
+            songState.currentSong = nextSong;  // INSERT NEW CURRENT SONG KEY
           }
           songState.firstSong = true
           //firstSong reloads the song (starts it from the begining)
 
-          if (audio != null) {
-            audio.pause()
+          if (songState.songPlaying) {
+            sound.pauseAsync()
           }
 
-          //PLAY THE SONG
+          if(songState.firstSong) {
+            await Audio.setAudioModeAsync({ playsInSilentModeIOS: true });
+            await sound.loadAsync(songState.currentSong.path);
+            songState.firstSong = false;
+          }
+          await sound.playAsync();
 
         }
       } else {
