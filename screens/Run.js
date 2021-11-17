@@ -19,7 +19,7 @@ import {allSongs} from './AddSong'
 
 var currentPace = 140; //placeholder variable 
 
-var currentBPM = 140;
+export var currentBPM = 140;
 
 var nextSongBPM = -1;
 
@@ -72,10 +72,12 @@ export class RunControl extends Component {
         //PLAY THE SONG
         var playlist = this.props.playlist;
         if (songState.currentSong == null) {
-          songState.currentSong = callNextSong({currentBPM, playlist})
+          console.log(currentBPM)
+          songState.currentSong = callNextSong(currentBPM, playlist)
         }
         if(songState.firstSong) {
             await Audio.setAudioModeAsync({ playsInSilentModeIOS: true });
+            
             await sound.loadAsync(songState.currentSong.path);
             songState.firstSong = false;
         }
@@ -130,7 +132,7 @@ export class RunControl extends Component {
             clearInterval(interval);
 
             i = i + BPMChange;
-            nextSongBPM = i + currentBPM;
+            nextSongBPM = currentBPM - i ;
             Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Heavy)
 
             interval = setInterval(myFunction, 1000 / ((currentBPM - i) / 60));
@@ -162,6 +164,9 @@ export class RunControl extends Component {
             songState.currentSong = songState.prevSong
             songState.prevSong = temp
             songState.firstSong = true
+            currentBPM = songState.currentSong.BPM
+            nextSongBPM = songState.currentSong.BPM
+            
             if (songState.songPlaying) {
               sound.pauseAsync()
             }
@@ -184,15 +189,15 @@ export class RunControl extends Component {
 
           if (songState.speed_increase) {
             songState.prevSong = songState.currentSong;
-            var playlist = <RunControl>{this.props.playlist.songs}</RunControl>;
-            nextSong = callNextSong({nextSongBPM,playlist});
+            var playlist = this.props.playlist
+            nextSong = callNextSong(nextSongBPM,playlist);
             songState.speed_increase = false;
             songState.currentSong = nextSong;  // INSERT NEW CURRENT SONG KEY
             // Figure out the next song to play based off of BPM increase
           } else if (songState.speed_decrease) {
             songState.prevSong = songState.currentSong;
-            var playlist = <RunControl>{this.props.playlist.songs}</RunControl>;
-            nextSong = callNextSong({nextSongBPM,playlist});
+            var playlist = this.props.playlist
+            nextSong = callNextSong(nextSongBPM,playlist);
             songState.currentSong = nextSong;  // INSERT NEW CURRENT SONG KEY
             songState.speed_decrease = false
 
@@ -204,8 +209,8 @@ export class RunControl extends Component {
             // Select a song at the BPM of the person's current pace
             nextSongBPM = currentPace;
             songState.prevSongKey = songState.currentSongKey;
-            var playlist = <RunControl>{this.props.playlist.songs}</RunControl>;
-            nextSong = callNextSong({nextSongBPM,playlist});
+            var playlist = this.props.playlist;
+            nextSong = callNextSong(nextSongBPM,playlist);
             songState.currentSong = nextSong;  // INSERT NEW CURRENT SONG KEY
           }
           songState.firstSong = true
