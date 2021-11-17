@@ -168,6 +168,7 @@ export class RunControl extends Component {
 
             
             if(songState.firstSong) {
+              await sound.unloadAsync()
               await Audio.setAudioModeAsync({ playsInSilentModeIOS: true });
               await sound.loadAsync(songState.currentSong.path);
               songState.firstSong = false;
@@ -215,6 +216,7 @@ export class RunControl extends Component {
           }
 
           if(songState.firstSong) {
+            await sound.unloadAsync()
             await Audio.setAudioModeAsync({ playsInSilentModeIOS: true });
             await sound.loadAsync(songState.currentSong.path);
             songState.firstSong = false;
