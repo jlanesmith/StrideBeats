@@ -8,22 +8,12 @@ import Run from './screens/Run'
 import MyPlaylists from './screens/MyPlaylists'
 import CreateEditPlaylist from './screens/CreateEditPlaylist'
 import AddSong from './screens/AddSong'
+import {allSongs} from './screens/AddSong'
 
 import 'react-native-gesture-handler';
 
 let playlists = [
-  {key: 'Playlist 1 a', songs: 
-    [{key: "Song 1", artist: "Artist 1", BPM: 160, path: "path/to/song1"}, 
-    {key: "Song 2", artist: "Artist 2", BPM: 110, path: "path/to/song2"}]
-  }, 
-  {key: 'Playlist 2 a', songs: 
-    [{key: "Song 1", artist: "Artist 1", BPM: 160, path: "path/to/song1"}, 
-    {key: "Song 2", artist: "Artist 2", BPM: 110, path: "path/to/song2"}]
-  }, 
-  {key: 'Playlist 3 a', songs: 
-    [{key: "Song 1", artist: "Artist 1", BPM: 160, path: "path/to/song1"}, 
-    {key: "Song 2", artist: "Artist 2", BPM: 110, path: "path/to/song2"}]
-  }
+  {key: 'Default Playlist', songs: allSongs }
 ];
 
 function HomeScreen({ navigation }) {
