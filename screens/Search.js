@@ -99,7 +99,7 @@ const styles = StyleSheet.create({
     margin: 6
   },
   cancelContainer: {
-    width: '40%',
+    width: '50%',
     margin: 10,
     borderWidth: 1,
     justifyContent: 'center',
@@ -113,7 +113,7 @@ const styles = StyleSheet.create({
     margin: 10
   },
   searchContainer: {
-    width: '40%',
+    width: '50%',
     margin: 10,
     borderWidth: 1,
     justifyContent: 'center',
