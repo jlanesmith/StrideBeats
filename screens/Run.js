@@ -62,7 +62,9 @@ export class RunControl extends Component {
     }
   };
   _onSingleTap = async event => {
-    if (event.nativeEvent.state === State.ACTIVE) {
+    console.log("play/pause detected")
+    if (event.nativeEvent.state === State.END) {
+      console.log("play/paused called")
       if (songState.songPlaying) {
         songState.songPlaying = false
         //PAUSE THE SONG
@@ -72,7 +74,6 @@ export class RunControl extends Component {
         //PLAY THE SONG
         var playlist = this.props.playlist;
         if (songState.currentSong == null) {
-          console.log(currentBPM)
           songState.currentSong = callNextSong(currentBPM, playlist)
         }
         if (songState.firstSong) {
@@ -185,7 +186,7 @@ export class RunControl extends Component {
 
           console.log('skip to next')
 
-          songState.prevSongKey = songState.currentSongKey
+          songState.prevSong = songState.currentSong
 
           if (songState.speed_increase) {
             songState.prevSong = songState.currentSong;
