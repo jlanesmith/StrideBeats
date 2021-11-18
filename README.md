@@ -11,6 +11,8 @@ Launch a bash shell and navigate to a directory where you would like to clone th
 
 `npm install --global expo-cli`
 
+`yarn`
+
 `expo start`
 
 This will launch the Expo Developer Tools in a new browser tab.
