@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+import React, { Component, useState, useEffect } from 'react';
 import { RefreshControlBase, Text, View } from 'react-native';
 
 import { TapGestureHandler, RotationGestureHandler, PanGestureHandler } from 'react-native-gesture-handler';
@@ -14,7 +14,7 @@ import { callNextSong } from '../components/callNextSong';
 
 import { Audio } from 'expo-av';
 
-import {allSongs} from './AddSong'
+import { allSongs } from './AddSong'
 
 
 var currentPace = 140; //placeholder variable 
@@ -75,11 +75,11 @@ export class RunControl extends Component {
           console.log(currentBPM)
           songState.currentSong = callNextSong(currentBPM, playlist)
         }
-        if(songState.firstSong) {
-            await Audio.setAudioModeAsync({ playsInSilentModeIOS: true });
-            
-            await sound.loadAsync(songState.currentSong.path);
-            songState.firstSong = false;
+        if (songState.firstSong) {
+          await Audio.setAudioModeAsync({ playsInSilentModeIOS: true });
+
+          await sound.loadAsync(songState.currentSong.path);
+          songState.firstSong = false;
         }
         await sound.playAsync();
 
@@ -132,7 +132,7 @@ export class RunControl extends Component {
             clearInterval(interval);
 
             i = i + BPMChange;
-            nextSongBPM = currentBPM - i ;
+            nextSongBPM = currentBPM - i;
             Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Heavy)
 
             interval = setInterval(myFunction, 1000 / ((currentBPM - i) / 60));
@@ -166,13 +166,13 @@ export class RunControl extends Component {
             songState.firstSong = true
             currentBPM = songState.currentSong.BPM
             nextSongBPM = songState.currentSong.BPM
-            
+
             if (songState.songPlaying) {
               sound.pauseAsync()
             }
 
-            
-            if(songState.firstSong) {
+
+            if (songState.firstSong) {
               await sound.unloadAsync()
               await Audio.setAudioModeAsync({ playsInSilentModeIOS: true });
               await sound.loadAsync(songState.currentSong.path);
@@ -190,14 +190,14 @@ export class RunControl extends Component {
           if (songState.speed_increase) {
             songState.prevSong = songState.currentSong;
             var playlist = this.props.playlist
-            nextSong = callNextSong(nextSongBPM,playlist);
+            nextSong = callNextSong(nextSongBPM, playlist);
             songState.speed_increase = false;
             songState.currentSong = nextSong;  // INSERT NEW CURRENT SONG KEY
             // Figure out the next song to play based off of BPM increase
           } else if (songState.speed_decrease) {
             songState.prevSong = songState.currentSong;
             var playlist = this.props.playlist
-            nextSong = callNextSong(nextSongBPM,playlist);
+            nextSong = callNextSong(nextSongBPM, playlist);
             songState.currentSong = nextSong;  // INSERT NEW CURRENT SONG KEY
             songState.speed_decrease = false
 
@@ -210,7 +210,7 @@ export class RunControl extends Component {
             nextSongBPM = currentPace;
             songState.prevSongKey = songState.currentSongKey;
             var playlist = this.props.playlist;
-            nextSong = callNextSong(nextSongBPM,playlist);
+            nextSong = callNextSong(nextSongBPM, playlist);
             songState.currentSong = nextSong;  // INSERT NEW CURRENT SONG KEY
           }
           songState.firstSong = true
@@ -220,7 +220,7 @@ export class RunControl extends Component {
             sound.pauseAsync()
           }
 
-          if(songState.firstSong) {
+          if (songState.firstSong) {
             await sound.unloadAsync()
             await Audio.setAudioModeAsync({ playsInSilentModeIOS: true });
             await sound.loadAsync(songState.currentSong.path);
@@ -263,6 +263,8 @@ export class RunControl extends Component {
           ref={pan}
           simultaneousHandlers={longPress}
           onHandlerStateChange={this._onPanHandlerStateChange}
+          failOffsetX={[-4,4]}
+          failOffsetY={[-6,6]}
         >
           <TapGestureHandler
             onHandlerStateChange={this._onSingleTap}
@@ -271,7 +273,9 @@ export class RunControl extends Component {
               ref={this.doubleTapRef}
               onHandlerStateChange={this._onDoubleTap}
               numberOfTaps={2}>
-              <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }} />
+              <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }} >
+                <Text style={{fontSize: 20}}>{"Tap to play/pause\nSwipe up & hold to increase BPM \nSwipe down & hold to decrease BPM\nSwipe left for next song\nSwipe right for previous song\nPinch to exit"}</Text>
+              </View>
             </TapGestureHandler>
           </TapGestureHandler>
         </PanGestureHandler>
@@ -283,7 +287,11 @@ export class RunControl extends Component {
 export default function RunScreen({ route, navigation }) {
 
   const selectedPlaylist = route.params;
+
   return (
-    <RunControl playlist={selectedPlaylist} navigation={navigation}></RunControl>
+     
+    <RunControl playlist={selectedPlaylist} navigation={navigation} > 
+      
+    </RunControl>
   );
 }
