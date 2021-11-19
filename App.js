@@ -44,7 +44,7 @@ function App() {
         <Stack.Screen options={{ headerTitleStyle: {fontSize: 32} }} name="Select Playlist" >
           {props  => <SelectPlaylist {...props} />}
         </Stack.Screen>
-        <Stack.Screen options={{ headerTitleStyle: {fontSize: 32} }} name="Run" >
+        <Stack.Screen options={{ headerTitleStyle: {fontSize: 32}, headerLeft: () => null }} name="Run" >
           {props  => <Run {...props} />}
         </Stack.Screen>
         <Stack.Screen options={{ headerTitleStyle: {fontSize: 32} }} name="My Playlists" >

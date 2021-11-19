@@ -1,5 +1,3 @@
-import React, { Component } from 'react';
-
 
 export function callNextSong(nextSongBPM, playlist) {
     var nextSong = [];

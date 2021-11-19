@@ -1,31 +1,18 @@
-import React, { Component, useState, useEffect } from 'react';
-import { RefreshControlBase, Text, View } from 'react-native';
+import React, { Component } from 'react';
+import { Image, View, Platform } from 'react-native';
 
-import { TapGestureHandler, RotationGestureHandler, PanGestureHandler } from 'react-native-gesture-handler';
-import {
-  LongPressGestureHandler,
-  PinchGestureHandler,
-  ScrollView,
-  State,
-} from 'react-native-gesture-handler';
+import { TapGestureHandler, PinchGestureHandler, PanGestureHandler, State } from 'react-native-gesture-handler';
 
 import * as Haptics from 'expo-haptics';
 import { callNextSong } from '../components/callNextSong';
-
 import { Audio } from 'expo-av';
-
-import { allSongs } from './AddSong'
-
 
 var currentPace = 140; //placeholder variable 
 
 export var currentBPM = 140;
 
 var nextSongBPM = -1;
-
 var nextSong = [];
-
-var audio = null;
 
 var songState = {
   firstSong: true,
@@ -39,6 +26,8 @@ var songState = {
   speed_decrease: false,
 };
 
+// Unused variables (not sure why they're here)
+var audio = null;
 var timer = null;
 var iterationOfTimer = 0;
 var firstTimer = true;
@@ -48,19 +37,41 @@ var BPMChange = 4;
 
 const sound = new Audio.Sound();
 
-
+function hapticHeavy() {
+  if (Platform.OS !== 'web')
+    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Heavy);
+}
+function hapticSuccess() {
+  if (Platform.OS !== 'web')
+    Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
+}
 
 export class RunControl extends Component {
+
   doubleTapRef = React.createRef();
+
   _onPinchHandlerStateChange = async event => {
     if (event.nativeEvent.state === State.ACTIVE) {
       if (songState.songPlaying) {
-        songState.songPlaying = false
-        await sound.pauseAsync()
+        songState.songPlaying = false;
+        await sound.stopAsync();
       }
+      songState.currentSong = null;
       this.props.navigation.navigate('Home');
     }
   };
+  
+  _onDoubleTap = async event => {
+    if (event.nativeEvent.state === State.ACTIVE) {
+      if (songState.songPlaying) {
+        songState.songPlaying = false;
+        await sound.stopAsync();
+      }
+      songState.currentSong = null;
+      this.props.navigation.navigate('Home');
+    }
+  };
+
   _onSingleTap = async event => {
     console.log("play/pause detected")
     if (event.nativeEvent.state === State.END) {
@@ -82,17 +93,11 @@ export class RunControl extends Component {
           await sound.loadAsync(songState.currentSong.path);
           songState.firstSong = false;
         }
-        await sound.playAsync();
-
+        await sound.playAsync();  
       }
     }
   };
-  _onDoubleTap = event => {
-    if (event.nativeEvent.state === State.ACTIVE) {
-      this.props.navigation.navigate('Home')
-    }
-  };
-
+  
   _onPanHandlerStateChange = async ({ nativeEvent }) => {
     if (nativeEvent.state === State.BEGAN) {
       songState.panStartX = nativeEvent.x
@@ -112,11 +117,11 @@ export class RunControl extends Component {
 
             i = i + BPMChange;
             nextSongBPM = i + currentBPM;
-            Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Heavy)
+            hapticHeavy();
 
             interval = setInterval(myFunction, 1000 / ((currentBPM + i) / 60));
           }
-          Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Heavy)
+          hapticHeavy();
           interval = setInterval(myFunction, 1000 / ((currentBPM + i) / 60));
 
           if (!songState.speed_increase) {
@@ -134,11 +139,11 @@ export class RunControl extends Component {
 
             i = i + BPMChange;
             nextSongBPM = currentBPM - i;
-            Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Heavy)
+            hapticHeavy();
 
             interval = setInterval(myFunction, 1000 / ((currentBPM - i) / 60));
           }
-          Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Heavy)
+          hapticHeavy();
           interval = setInterval(myFunction, 1000 / ((currentBPM - i) / 60));
 
 
@@ -240,20 +245,19 @@ export class RunControl extends Component {
 
           console.log('increase song')
           //CONFIRM THE INCREASE HAPtIC
-          Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success)
+          hapticSuccess();
           //CALCULATE HOW FAST
         } else {
           console.log('decrease song')
           //STOP THE DECREASE
-          Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success)
+          hapticSuccess();
           //CALCULATE HOW FAST
-
         }
         //PLAY THE SONG
       }
     }
-
   };
+
   render() {
     const pan = React.createRef();
     const longPress = React.createRef();
@@ -274,9 +278,16 @@ export class RunControl extends Component {
               ref={this.doubleTapRef}
               onHandlerStateChange={this._onDoubleTap}
               numberOfTaps={2}>
-              <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }} >
-                <Text style={{fontSize: 20}}>{"Tap to play/pause\nSwipe up & hold to increase BPM \nSwipe down & hold to decrease BPM\nSwipe left for next song\nSwipe right for previous song\nPinch to exit"}</Text>
-              </View>
+              <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center', flexDirection: 'row' }} >
+                <Image
+                  style = {{
+                    height: '80%',
+                    width: '80%',
+                    resizeMode: 'contain'
+                  }}
+                  source={require("../assets/gesture-instructions.png")}
+                />
+              </View> 
             </TapGestureHandler>
           </TapGestureHandler>
         </PanGestureHandler>
