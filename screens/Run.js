@@ -73,7 +73,6 @@ export class RunControl extends Component {
   };
 
   _onSingleTap = async event => {
-    console.log("play/pause detected")
     if (event.nativeEvent.state === State.END) {
       console.log("play/paused called")
       if (songState.songPlaying) {
@@ -187,7 +186,7 @@ export class RunControl extends Component {
             await sound.playAsync();
           }
           //left swipe (skip to Next Song)
-        } else {
+        } else if (deltaX > 0) {
 
           console.log('skip to next')
 
@@ -268,8 +267,8 @@ export class RunControl extends Component {
           ref={pan}
           simultaneousHandlers={longPress}
           onHandlerStateChange={this._onPanHandlerStateChange}
-          failOffsetX={[-4,4]}
-          failOffsetY={[-6,6]}
+          // failOffsetX={[-4,4]}
+          // failOffsetY={[-6,6]}
         >
           <TapGestureHandler
             onHandlerStateChange={this._onSingleTap}
