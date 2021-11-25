@@ -11,7 +11,12 @@ export default function SelectPlaylist({ route, navigation }) {
         data={playlists}
         renderItem={({item}) => (
           <View elevation={20}>
-            <TouchableOpacity style={styles.row} onPress={() => navigation.navigate('Run', item)}>
+            <TouchableOpacity style={styles.row} onPress={() => {
+              navigation.reset({
+                index: 0,
+                routes: [{ name: 'Run', params: item }],
+              });
+            }}>
               <Text style={styles.title}>{item.key}</Text>
               <Text style={styles.songNumber}>Number of songs: {item.songs.length}</Text>
             </TouchableOpacity>
