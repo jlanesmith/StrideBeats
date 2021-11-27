@@ -1,6 +1,7 @@
 
 export function callNextSong(nextSongBPM, playlist) {
     var nextSong = [];
+    var bpmbuffer = 5;
 
     const BPMlist = Array.from(Array(playlist.songs.length).keys());
     for (var i = 0 ; i < playlist.songs.length ; i++ ){
@@ -14,21 +15,29 @@ export function callNextSong(nextSongBPM, playlist) {
         BPMdiff[i] = Math.abs(BPMdifftemp[i]);
     }
 
-    var diffMin = Math.min(...BPMdiff);
+    var BPMbool = BPMdiff;
+    for (var i = 0; i < BPMdifftemp.length ; i++){
+        if (BPMdiff[i] <= bpmbuffer) {
+            BPMbool[i] = 1;
+        }else{
+            BPMbool[i] = 0;
+        }
+    }
+    var diffMin = Math.max(...BPMbool);
     var indmin = [];
 
     // find the indeces of minimum elements
-    var idx = BPMdiff.indexOf(diffMin);
+    var idx = BPMbool.indexOf(diffMin);
 
     while (idx != -1) {
     indmin.push(idx);
-    idx = BPMdiff.indexOf(diffMin, idx + 1);
+    idx = BPMbool.indexOf(diffMin, idx + 1);
     }
 
     // find the number of minimum elements
     var minCount = 0;
     for (var i = 0; i < BPMdifftemp.length; i++){
-        if(BPMdiff[i] == diffMin){
+        if(BPMbool[i] == diffMin){
             minCount = minCount+1;
         }
     }
