@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+import React, { Component, useState } from 'react';
 import { Image, View, Platform } from 'react-native';
 
 import { TapGestureHandler, PinchGestureHandler, PanGestureHandler, State } from 'react-native-gesture-handler';
@@ -6,8 +6,10 @@ import { TapGestureHandler, PinchGestureHandler, PanGestureHandler, State } from
 import * as Haptics from 'expo-haptics';
 import { callNextSong } from '../components/callNextSong';
 import { Audio } from 'expo-av';
+import Pedometer from '@t2tx/react-native-universal-pedometer';
+import { monitorsteps } from '../components/monitorsteps';
 
-var currentPace = 140; //placeholder variable 
+export const [currentPace,setCurrentPace] = useState(0);
 
 export var currentBPM = 140;
 
@@ -36,6 +38,18 @@ var interval = null;
 var BPMChange = 4;
 
 const sound = new Audio.Sound();
+
+// const interval = setInterval(() =>{
+//   console.log('DetectBPM');
+//   setCurrentPace(12*Pedometer.queryPedometerDataBetweenDates(Date.now(),Date.now()+5000));
+// }, 5500);
+
+// return () => {
+//   console.log(currentPace)
+//   clearInterval(interval);
+// }
+
+monitorsteps();
 
 function hapticHeavy() {
   if (Platform.OS !== 'web')
@@ -189,6 +203,7 @@ export class RunControl extends Component {
         } else if (deltaX > 0) {
 
           console.log('skip to next')
+          console.log(currentBPM)
 
           songState.prevSong = songState.currentSong
 
