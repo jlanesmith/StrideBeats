@@ -2,6 +2,8 @@ import React from 'react';
 import { SafeAreaView, StyleSheet, FlatList, Text, View, TouchableOpacity } from 'react-native';
 import { Icon, CheckBox } from 'react-native-elements'
 import { Dimensions } from 'react-native';
+import { Picker } from '@react-native-picker/picker';
+import { BlurView } from 'expo-blur';
 import Search from './Search'
 
 export const allSongs = [
@@ -33,21 +35,33 @@ export default function AddSong({ route, navigation }) {
   const [searchBpmMin, setSearchBpmMin] = React.useState(0);
   const [searchBpmMax, setSearchBpmMax] = React.useState(1000);
 
+  const [selectedSort, setSelectedSort] = React.useState("none");
+  const [sortDirection, setSortDirection] = React.useState(true);
+
   const visibleSongs = allSongs
     .filter(song => (typeof playlistSongs.find(o => o.key == song.key) == 'undefined')) // Only songs that aren't in the playlist
     .filter(song => song.key.toLowerCase().includes(searchTitle.toLowerCase()))
     .filter(song => song.artist.toLowerCase().includes(searchArtist.toLowerCase()))
     .filter(song => song.BPM >= searchBpmMin)
     .filter(song => song.BPM <= searchBpmMax);
-  const [checkboxes, setCheckboxes] = React.useState(new Array(visibleSongs.length).fill(0));
+
+  let sortedSongs = visibleSongs;
+  if (selectedSort == "title")
+    sortedSongs.sort((a,b) => sortDirection ? a.key.localeCompare(b.key) : b.key.localeCompare(a.key));
+  else if (selectedSort == "artist")
+    sortedSongs.sort((a,b) => sortDirection ? a.artist.localeCompare(b.artist) : b.artist.localeCompare(a.artist));
+  else if (selectedSort == "bpm")
+    sortedSongs.sort((a,b) => sortDirection ? a.BPM - b.BPM : b.BPM - a.BPM);
+
+  const [checkboxes, setCheckboxes] = React.useState(new Array(sortedSongs.length).fill(0));
   const [, setUpdate] = React.useState(0);
 
   return (
     <SafeAreaView style={styles.container}>
       <View style={styles.topViewContainer}>
         <View style={styles.topView}>
-          <View style={styles.searchContainer}>
-            <View style={styles.searchButton}> 
+          <View style={styles.iconContainer}>
+            <View style={styles.iconButton}> 
               <TouchableOpacity onPress={() => setOpenSearch(true)}>
                 <Icon name='search' type='material-icons' size={40} />
               </TouchableOpacity>
@@ -62,13 +76,35 @@ export default function AddSong({ route, navigation }) {
               setSearchBpmMax(1000);
             }}
           >
-            <Text style={styles.clearSearchText}> Clear Search </Text>
+            <Text style={styles.clearSearchText}> Clear </Text>
+            <Text style={styles.clearSearchText}> Search </Text>
           </TouchableOpacity>
+          <View style={styles.pickerContainer}>
+            <View style={styles.picker}>
+              <Picker
+                selectedValue={selectedSort}
+                onValueChange={(itemValue, itemIndex) =>
+                  setSelectedSort(itemValue)
+                }>
+                <Picker.Item style={styles.pickerItem} label="None" value="none" />
+                <Picker.Item style={styles.pickerItem} label="Title" value="title" />
+                <Picker.Item style={styles.pickerItem} label="Artist" value="artist" />
+                <Picker.Item style={styles.pickerItem} label="BPM" value="bpm" />
+              </Picker>
+            </View>
+          </View>
+          <View style={styles.iconContainer}>
+            <View style={styles.iconButton}> 
+              <TouchableOpacity onPress={() => setSortDirection(!sortDirection)}>
+                <Icon name={sortDirection ? 'sort-amount-down-alt' : 'sort-amount-up'} type='font-awesome-5' size={30} />
+              </TouchableOpacity>
+            </View>
+          </View>
         </View>
       </View>
       <FlatList
         style={styles.flatList}
-        data={visibleSongs}
+        data={sortedSongs}
         renderItem={({item, index}) => (
           <View elevation={20} style={styles.row}>
             <View style={styles.songArtistView}>
@@ -124,17 +160,19 @@ export default function AddSong({ route, navigation }) {
           </TouchableOpacity>
         </View>
       </View>
-      <Search 
-        open={openSearch} 
-        onCancel={() => setOpenSearch(false)} 
-        onSearch={(title, artist, bpmMin, bpmMax) => {
-          setSearchTitle(title);
-          setSearchArtist(artist);
-          setSearchBpmMin(bpmMin == "" ? 0 : bpmMin.toString());
-          setSearchBpmMax(bpmMax == "" ? 1000 :bpmMax.toString());
-          setOpenSearch(false);
-        }}
-      />
+      <BlurView tint="dark" intensity={50} style={openSearch ? { position: 'absolute', height:'100%', width:'100%'} : {}}>
+        <Search 
+          open={openSearch} 
+          onCancel={() => setOpenSearch(false)} 
+          onSearch={(title, artist, bpmMin, bpmMax) => {
+            setSearchTitle(title);
+            setSearchArtist(artist);
+            setSearchBpmMin(bpmMin == "" ? 0 : bpmMin.toString());
+            setSearchBpmMax(bpmMax == "" ? 1000 :bpmMax.toString());
+            setOpenSearch(false);
+          }}
+        />
+      </BlurView>
     </SafeAreaView>
   );
 }
@@ -152,11 +190,12 @@ const styles = StyleSheet.create({
   },
   topView: {
     flexDirection: 'row',
+    marginHorizontal: 20
   },
-  searchContainer: {
+  iconContainer: {
     justifyContent: 'center',
   },
-  searchButton: {
+  iconButton: {
     justifyContent: 'center',
     width: 50,
     height: 50,
@@ -170,10 +209,27 @@ const styles = StyleSheet.create({
     marginHorizontal: 10,
     borderRadius: 12,
     borderWidth: 1,
-    padding: 10
+    padding: 6
   },
   clearSearchText: {
-    fontSize: 20,
+    fontSize: 18,
+    textAlign: 'center'
+  },
+  pickerContainer: {
+    flexDirection: 'row',
+    marginVertical: 5,
+    backgroundColor: 'white',
+    borderRadius: 12,
+    borderWidth: 1,
+    paddingHorizontal: 5,
+    marginRight: 10
+  },
+  picker: {
+    width: 110,
+    justifyContent: 'center'
+  },
+  pickerItem: {
+    fontSize: 18,
     textAlign: 'center'
   },
   flatList: {
