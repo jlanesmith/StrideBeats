@@ -12,7 +12,7 @@ export const allSongs = [
   {key: "Holding Out for a Hero", artist: "Bonnie Tyler", BPM: 150, path: require("../assets/sounds/Hero_fast.m4a")}, 
   {key: "My Same", artist: "Adele", BPM: 126, path: require("../assets/sounds/My_Same_med.m4a")},
   {key: "Mr. Brightside", artist: "The Killers", BPM: 148, path: require("../assets/sounds/brightside_fast.m4a")}, 
-  {key: "Take It All", artist: "Adele", BPM: 138, path: require("../assets/sounds/take_it_fast.m4a")},
+  {key: "We're Not Gonna Take It", artist: "Twisted Sister", BPM: 152, path: require("../assets/sounds/take_it_fast.m4a")},
   {key: "Shake It Off", artist: "Taylor Swift", BPM: 162, path: require("../assets/sounds/Shake_it_Off.m4a")}, 
   {key: "Rock and Roll Ain't Noise Pollution", artist: "AC/DC", BPM: 95, path: require("../assets/sounds/Rock_and_Roll.m4a")},
   {key: "American Idiot", artist: "Green Day", BPM: 186, path: require("../assets/sounds/American_Idiot.m4a")},
