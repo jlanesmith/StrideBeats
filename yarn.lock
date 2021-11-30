@@ -1421,6 +1421,11 @@
   resolved "https://registry.npmjs.org/@sideway/pinpoint/-/pinpoint-2.0.0.tgz"
   integrity sha512-RNiOoTPkptFtSVzQevY/yWtZwf/RxyVnPy/OcA9HBM3MlGDnBEYL5B41H0MTn0Uec8Hi+2qUtTfG2WWZBmMejQ==
 
+"@t2tx/react-native-universal-pedometer@^2.0.3":
+  version "2.0.3"
+  resolved "https://registry.yarnpkg.com/@t2tx/react-native-universal-pedometer/-/react-native-universal-pedometer-2.0.3.tgz#be80b9bc371c551fd3ac1513d7d4e4f61301dc4c"
+  integrity sha512-wZhM6tJxhsbeF02M/NMPqaNJccNge5LGGUpITcDAfRA3UOOoNdO0/9l/IgvIWFc0aPTljWwulH5laIuKmWf/nA==
+
 "@types/graceful-fs@^4.1.2":
   version "4.1.5"
   resolved "https://registry.npmjs.org/@types/graceful-fs/-/graceful-fs-4.1.5.tgz"

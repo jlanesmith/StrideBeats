@@ -1,4 +1,4 @@
-import React, { Component, useState } from 'react';
+import React, { Component, useEffect } from 'react';
 import { Image, View, Platform } from 'react-native';
 
 import { TapGestureHandler, PinchGestureHandler, PanGestureHandler, State } from 'react-native-gesture-handler';
@@ -7,9 +7,8 @@ import * as Haptics from 'expo-haptics';
 import { callNextSong } from '../components/callNextSong';
 import { Audio } from 'expo-av';
 import Pedometer from '@t2tx/react-native-universal-pedometer';
-import { monitorsteps } from '../components/monitorsteps';
 
-export const [currentPace,setCurrentPace] = useState(0);
+var currentPace = 140;
 
 export var currentBPM = 140;
 
@@ -38,18 +37,6 @@ var interval = null;
 var BPMChange = 4;
 
 const sound = new Audio.Sound();
-
-// const interval = setInterval(() =>{
-//   console.log('DetectBPM');
-//   setCurrentPace(12*Pedometer.queryPedometerDataBetweenDates(Date.now(),Date.now()+5000));
-// }, 5500);
-
-// return () => {
-//   console.log(currentPace)
-//   clearInterval(interval);
-// }
-
-monitorsteps();
 
 function hapticHeavy() {
   if (Platform.OS !== 'web')
@@ -314,10 +301,19 @@ export default function RunScreen({ route, navigation }) {
 
   const selectedPlaylist = route.params;
 
-  return (
-     
-    <RunControl playlist={selectedPlaylist} navigation={navigation} > 
-      
-    </RunControl>
+  if (Platform.OS === 'ios') {
+    useEffect(() => {
+      const interval = setInterval(() => {
+
+        console.log("Check pace");
+        currentPace = 12*Pedometer.queryPedometerDataBetweenDates(Date.now()-5000,Date.now());
+
+      }, 1000);
+      return () => clearInterval(interval);
+    }, []);
+  }
+
+  return (  
+      <RunControl playlist={selectedPlaylist} navigation={navigation} />    
   );
 }
