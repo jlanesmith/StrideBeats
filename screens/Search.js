@@ -57,7 +57,7 @@ export default function Search(props) {
                 <TouchableOpacity onPress={() => { 
                   onSearch(searchTitle, searchArtist, searchBpmMin, searchBpmMax);                
                 }}>
-                  <Text style={styles.searchText}>Search</Text>
+                  <Text style={styles.searchText}>Filter</Text>
                 </TouchableOpacity>
               </View>
             </View>
@@ -99,7 +99,7 @@ const styles = StyleSheet.create({
     margin: 6
   },
   cancelContainer: {
-    width: '40%',
+    width: 110,
     margin: 10,
     borderWidth: 1,
     justifyContent: 'center',
@@ -113,7 +113,7 @@ const styles = StyleSheet.create({
     margin: 10
   },
   searchContainer: {
-    width: '40%',
+    width: 110,
     margin: 10,
     borderWidth: 1,
     justifyContent: 'center',
