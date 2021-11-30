@@ -6,7 +6,7 @@ import { TapGestureHandler, PinchGestureHandler, PanGestureHandler, State } from
 import * as Haptics from 'expo-haptics';
 import { callNextSong } from '../components/callNextSong';
 import { Audio } from 'expo-av';
-import Pedometer from '@t2tx/react-native-universal-pedometer';
+import { Pedometer } from 'expo-sensors';
 
 var currentPace = 140;
 
@@ -85,6 +85,9 @@ export class RunControl extends Component {
         //PLAY THE SONG
         var playlist = this.props.playlist;
         if (songState.currentSong == null) {
+          if(currentPace != 0 ){
+            currentBPM = currentPace
+          }
           songState.currentSong = callNextSong(currentBPM, playlist)
         }
         if (songState.firstSong) {
@@ -302,15 +305,25 @@ export default function RunScreen({ route, navigation }) {
   const selectedPlaylist = route.params;
 
   if (Platform.OS === 'ios') {
-    useEffect(() => {
-      const interval = setInterval(() => {
 
-        console.log("Check pace");
-        currentPace = 12*Pedometer.queryPedometerDataBetweenDates(Date.now()-5000,Date.now());
+      setInterval(async() => {
+        
+        
+          await Pedometer.getStepCountAsync(new Date(Date.now()-5000), new Date(Date.now())).then(
+          result => {
+            currentPace= 12 *result.steps
+          },
+          error => {
+            console.log("error getting steps, defaulting to 140")
+            currentPace= 140
+          }
+        
+        )
+          console.log("outside ped", currentPace)
+      }, 5000);
 
-      }, 1000);
-      return () => clearInterval(interval);
-    }, []);
+      // return () => clearInterval(interval);
+      // console.log(Pedometer.getStepCountAsync(new Date(Date.now()-500000), new Date(Date.now()-100000)));
   }
 
   return (  
