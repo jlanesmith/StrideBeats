@@ -200,12 +200,14 @@ export class RunControl extends Component {
             nextSong = callNextSong(nextSongBPM, playlist);
             songState.speed_increase = false;
             songState.currentSong = nextSong;  // INSERT NEW CURRENT SONG KEY
+            currentBPM = nextSongBPM;
             // Figure out the next song to play based off of BPM increase
           } else if (songState.speed_decrease) {
             songState.prevSong = songState.currentSong;
             var playlist = this.props.playlist
             nextSong = callNextSong(nextSongBPM, playlist);
             songState.currentSong = nextSong;  // INSERT NEW CURRENT SONG KEY
+            currentBPM = nextSongBPM;
             songState.speed_decrease = false
 
             // Figure out the next song to play based off of BPM decrease
@@ -214,7 +216,7 @@ export class RunControl extends Component {
 
             //NO INCREASE/DECREASE 
             // Select a song at the BPM of the person's current pace
-            nextSongBPM = currentPace;
+            nextSongBPM = Platform.OS == 'ios' ? currentPace : currentBPM;
             songState.prevSongKey = songState.currentSongKey;
             var playlist = this.props.playlist;
             nextSong = callNextSong(nextSongBPM, playlist);
@@ -269,8 +271,6 @@ export class RunControl extends Component {
           ref={pan}
           simultaneousHandlers={longPress}
           onHandlerStateChange={this._onPanHandlerStateChange}
-          // failOffsetX={[-4,4]}
-          // failOffsetY={[-6,6]}
         >
           <TapGestureHandler
             onHandlerStateChange={this._onSingleTap}
