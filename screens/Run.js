@@ -54,10 +54,18 @@ export class RunControl extends Component {
   _onPinchHandlerStateChange = async event => {
     if (event.nativeEvent.state === State.ACTIVE) {
       if (songState.songPlaying) {
-        songState.songPlaying = false;
+
         await sound.stopAsync();
       }
+
+      if (songState.currentSong != null){
+        await sound.unloadAsync();
+      }
+      songState.songPlaying = false;
+      songState.firstSong = true;
       songState.currentSong = null;
+      currentBPM = 140;
+      nextSongBPM = -1;
       this.props.navigation.navigate('Home');
     }
   };
@@ -65,21 +73,33 @@ export class RunControl extends Component {
   _onDoubleTap = async event => {
     if (event.nativeEvent.state === State.ACTIVE) {
       if (songState.songPlaying) {
-        songState.songPlaying = false;
+
         await sound.stopAsync();
       }
+
+      if (songState.currentSong != null){
+        await sound.unloadAsync();
+      }
+      songState.songPlaying = false;
+      songState.firstSong = true;
       songState.currentSong = null;
+      currentBPM = 140;
+      nextSongBPM = -1;
       this.props.navigation.navigate('Home');
     }
   };
 
   _onSingleTap = async event => {
     if (event.nativeEvent.state === State.END) {
-      console.log("play/paused called")
+      
       if (songState.songPlaying) {
         songState.songPlaying = false
         //PAUSE THE SONG
-        await sound.pauseAsync()
+        try {
+          await sound.pauseAsync()
+        } catch(err) {
+          alert("Please wait for audio to load!")
+        }
       } else {
         songState.songPlaying = true
         //PLAY THE SONG
@@ -96,6 +116,8 @@ export class RunControl extends Component {
           await sound.loadAsync(songState.currentSong.path);
           songState.firstSong = false;
         }
+        console.log("play/paused called: on", songState.currentSong.key)
+
         await sound.playAsync();  
       }
     }
@@ -200,6 +222,7 @@ export class RunControl extends Component {
           if (songState.speed_increase) {
             songState.prevSong = songState.currentSong;
             var playlist = this.props.playlist
+            console.log(nextSongBPM)
             nextSong = callNextSong(nextSongBPM, playlist);
             songState.speed_increase = false;
             songState.currentSong = nextSong;  // INSERT NEW CURRENT SONG KEY
