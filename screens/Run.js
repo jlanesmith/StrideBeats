@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+import React, { Component, useEffect } from 'react';
 import { Image, View, Platform } from 'react-native';
 
 import { TapGestureHandler, PinchGestureHandler, PanGestureHandler, State } from 'react-native-gesture-handler';
@@ -6,8 +6,9 @@ import { TapGestureHandler, PinchGestureHandler, PanGestureHandler, State } from
 import * as Haptics from 'expo-haptics';
 import { callNextSong } from '../components/callNextSong';
 import { Audio } from 'expo-av';
+import { Pedometer } from 'expo-sensors';
 
-var currentPace = 140; //placeholder variable 
+var currentPace = 140;
 
 export var currentBPM = 140;
 
@@ -84,6 +85,9 @@ export class RunControl extends Component {
         //PLAY THE SONG
         var playlist = this.props.playlist;
         if (songState.currentSong == null) {
+          if(currentPace != 0 ){
+            currentBPM = currentPace
+          }
           songState.currentSong = callNextSong(currentBPM, playlist)
         }
         if (songState.firstSong) {
@@ -189,6 +193,7 @@ export class RunControl extends Component {
         } else if (deltaX > 0) {
 
           console.log('skip to next')
+          console.log(currentBPM)
 
           songState.prevSong = songState.currentSong
 
@@ -198,12 +203,14 @@ export class RunControl extends Component {
             nextSong = callNextSong(nextSongBPM, playlist);
             songState.speed_increase = false;
             songState.currentSong = nextSong;  // INSERT NEW CURRENT SONG KEY
+            currentBPM = nextSongBPM;
             // Figure out the next song to play based off of BPM increase
           } else if (songState.speed_decrease) {
             songState.prevSong = songState.currentSong;
             var playlist = this.props.playlist
             nextSong = callNextSong(nextSongBPM, playlist);
             songState.currentSong = nextSong;  // INSERT NEW CURRENT SONG KEY
+            currentBPM = nextSongBPM;
             songState.speed_decrease = false
 
             // Figure out the next song to play based off of BPM decrease
@@ -212,7 +219,7 @@ export class RunControl extends Component {
 
             //NO INCREASE/DECREASE 
             // Select a song at the BPM of the person's current pace
-            nextSongBPM = currentPace;
+            nextSongBPM = Platform.OS == 'ios' ? currentPace : currentBPM;
             songState.prevSongKey = songState.currentSongKey;
             var playlist = this.props.playlist;
             nextSong = callNextSong(nextSongBPM, playlist);
@@ -267,8 +274,6 @@ export class RunControl extends Component {
           ref={pan}
           simultaneousHandlers={longPress}
           onHandlerStateChange={this._onPanHandlerStateChange}
-          // failOffsetX={[-4,4]}
-          // failOffsetY={[-6,6]}
         >
           <TapGestureHandler
             onHandlerStateChange={this._onSingleTap}
@@ -299,10 +304,29 @@ export default function RunScreen({ route, navigation }) {
 
   const selectedPlaylist = route.params;
 
-  return (
-     
-    <RunControl playlist={selectedPlaylist} navigation={navigation} > 
-      
-    </RunControl>
+  if (Platform.OS === 'ios') {
+
+      setInterval(async() => {
+        
+        
+          await Pedometer.getStepCountAsync(new Date(Date.now()-5000), new Date(Date.now())).then(
+          result => {
+            currentPace= 12 *result.steps
+          },
+          error => {
+            console.log("error getting steps, defaulting to 140")
+            currentPace= 140
+          }
+        
+        )
+          console.log("outside ped", currentPace)
+      }, 5000);
+
+      // return () => clearInterval(interval);
+      // console.log(Pedometer.getStepCountAsync(new Date(Date.now()-500000), new Date(Date.now()-100000)));
+  }
+
+  return (  
+      <RunControl playlist={selectedPlaylist} navigation={navigation} />    
   );
 }
