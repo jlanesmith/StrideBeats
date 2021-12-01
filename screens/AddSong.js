@@ -1,7 +1,6 @@
 import React from 'react';
 import { SafeAreaView, StyleSheet, FlatList, Text, View, TouchableOpacity } from 'react-native';
 import { Icon, CheckBox } from 'react-native-elements'
-import { Dimensions } from 'react-native';
 import { Picker } from '@react-native-picker/picker';
 import { BlurView } from 'expo-blur';
 import Search from './Search'
@@ -63,7 +62,7 @@ export default function AddSong({ route, navigation }) {
           <View style={styles.iconContainer}>
             <View style={styles.iconButton}> 
               <TouchableOpacity onPress={() => setOpenSearch(true)}>
-                <Icon name='search' type='material-icons' size={40} />
+                <Icon name='filter-outline' type='material-community' size={40} />
               </TouchableOpacity>
             </View>
           </View>
@@ -77,7 +76,7 @@ export default function AddSong({ route, navigation }) {
             }}
           >
             <Text style={styles.clearSearchText}> Clear </Text>
-            <Text style={styles.clearSearchText}> Search </Text>
+            <Text style={styles.clearSearchText}> Filter </Text>
           </TouchableOpacity>
           <View style={styles.pickerContainer}>
             <View style={styles.picker}>
@@ -103,7 +102,6 @@ export default function AddSong({ route, navigation }) {
         </View>
       </View>
       <FlatList
-        style={styles.flatList}
         data={sortedSongs}
         renderItem={({item, index}) => (
           <View elevation={20} style={styles.row}>
@@ -180,6 +178,8 @@ export default function AddSong({ route, navigation }) {
 const styles = StyleSheet.create({
   container: {
     paddingTop: 8,
+    flex:1,
+    justifyContent: 'center'
   },
   title: {
     fontSize: 24,
@@ -231,10 +231,6 @@ const styles = StyleSheet.create({
   pickerItem: {
     fontSize: 18,
     textAlign: 'center'
-  },
-  flatList: {
-    height: Dimensions.get('window').height - 210,
-    flexGrow: 0
   },
   row: {
     backgroundColor: 'red',
