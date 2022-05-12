@@ -1,5 +1,5 @@
 # StrideBeats
-Project for ECSE 542: Human-Computer Interaction
+This app, created with Expo Go and React Native, is a running app which plays music that can match the pace of a runner. Furthermore, using eyes-free gestures, you can request faster or slower songs in order to help you run faster or slower. This app is a project for ECSE 542: Human-Computer Interaction
 
 ## Testing instructions
 
